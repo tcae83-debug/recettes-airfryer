@@ -135,10 +135,30 @@ a{color:var(--accent)}
 #pick.open,#slotpick.open{display:flex}
 #pick .sheet,#slotpick .sheet{max-height:85vh;overflow-y:auto}
 .plist .card{padding:8px}.plist .emo{flex-basis:40px;height:40px;font-size:22px}
-.sgrid{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-top:10px}
+.sgrid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:6px;align-items:center;margin-top:10px}
 .sgrid button{padding:10px 6px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:13px;min-height:44px}
 .sgrid button.full{background:var(--soft)}
 .acc li{margin-bottom:8px}
+.alinks{display:flex;flex-direction:column;gap:4px;margin-top:5px}
+.alink{display:inline-block;align-self:flex-start;padding:6px 10px;border-radius:10px;background:var(--soft);color:var(--ink);font-size:13px;font-weight:650;text-decoration:none}
+.alink.s{background:transparent;border:1px solid var(--line);color:var(--accent)}
+.alinks small{color:var(--muted);font-size:11.5px;margin:-2px 0 2px 4px}
+.pplbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;margin:8px 0}
+.pplbar span{font-weight:700;font-size:15px}.pplbar small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.pplbar .step{display:flex;align-items:center;gap:10px}.pplbar .step button{width:36px;height:36px;border-radius:50%;background:var(--soft);font-size:20px;font-weight:700}
+.pplbar .step b{min-width:22px;text-align:center;font-size:18px}
+select.ppl{flex:0 0 auto;max-width:84px;padding:6px 2px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:12.5px}
+.slot .lb{flex:0 0 50px}
+.aisle{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;margin:10px 0;box-shadow:var(--shadow)}
+.aisle h3{margin:2px 0 4px;font-size:16px;display:flex;align-items:center;gap:6px}.aisle h3 small{margin-left:auto;color:var(--muted);font-weight:600}
+.aisle.placard{background:transparent;border-style:dashed;box-shadow:none}.aisle .pn{font-size:12.5px;color:var(--muted);margin:0 0 4px}
+.ci{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px dashed var(--line);cursor:pointer}
+.ci input{width:22px;height:22px;flex:0 0 auto;accent-color:var(--ok)}
+.ci .cn{flex:1;min-width:0;font-size:15px}.ci .cn small{display:block;color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci .cq{flex:0 0 auto;font-size:14px;text-align:right;max-width:45%}
+.ci.ok .cn,.ci.ok .cq{text-decoration:line-through;opacity:.5}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#2b211b;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:99;pointer-events:none}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
@@ -187,26 +207,26 @@ a{color:var(--accent)}
 <script>
 (function(){
 const $=s=>document.querySelector(s);
-const CATS=[["all","Tout"],["regime","🥗 Régime / léger"],["proteines","💪 Protéinées"],["specialites","🌍 Spécialités"],["entrees","Entrées"],["plats","Plats"],["accomp","Accompagnements"],["desserts","Desserts"],["aperos","Apéritifs & snacks"],["petitdej","Petit-déjeuner"],["surgeles","Surgelés"],["rechauffer","Réchauffer"]];
+const CATS=[["all","Tout"],["viandes","🥩 Viandes"],["volaille","🍗 Volaille"],["poissons","🐟 Poissons"],["regime","🥗 Régime / léger"],["proteines","💪 Protéinées"],["specialites","🌍 Spécialités"],["entrees","Entrées"],["plats","Plats"],["accomp","Accompagnements"],["desserts","Desserts"],["aperos","Apéritifs & snacks"],["petitdej","Petit-déjeuner"],["surgeles","Surgelés"],["rechauffer","Réchauffer"]];
 const FLAGS={"Italie":"🇮🇹","Espagne":"🇪🇸","Maroc":"🇲🇦","Liban":"🇱🇧","Inde":"🇮🇳","Japon":"🇯🇵","Chine":"🇨🇳","Vietnam":"🇻🇳","Thaïlande":"🇹🇭","Corée":"🇰🇷","Mexique":"🇲🇽","USA":"🇺🇸","Grèce":"🇬🇷","Turquie":"🇹🇷","Belgique":"🇧🇪","Royaume-Uni":"🇬🇧",
  "Provence":"🌻","Bretagne":"⚓","Normandie":"🍏","Lorraine / Alsace":"🥨","Paris / Île-de-France":"🗼","Lyon":"🦁","Sud-Ouest":"🦆","Savoie / Dauphiné":"🏔️","Nord":"🍺","Pays basque":"🌶️","Bourgogne":"🍇","Corse":"🏝️","Antilles / Réunion":"🌴"};
 const originKey=r=>r.o?(r.o[1]||r.o[0]):"";
 const originLabel=r=>r.o?((FLAGS[originKey(r)]||"🌍")+" "+(r.o[1]?r.o[1]+" (France)":r.o[0])):"";
-const DAYS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"],MEALS=["Midi","Soir"];
+const DAYS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"],MEALS=["Petit-déj","Midi","Soir"];
 const VEG=new Set(["legumineuse","soja","oeuf","fromage","legume"]);
 const MAIN=r=>VEG.has(r.p)?"vege":r.p;
 const PNAME={volaille:"Volaille",viande:"Viande",poisson:"Poisson",vege:"Végétarien",legumineuse:"Légumineuses",soja:"Soja",oeuf:"Œufs",fromage:"Fromage",legume:"Légumes"};
 const SUBS=[["","Tous les plats"],["viande","Viande"],["volaille","Volaille"],["poisson","Poisson"],["vegetarien","Végétarien"]];
 const TIMES=[[0,"Toutes durées"],[15,"< 15 min"],[30,"< 30 min"]];
 const CATNAME=Object.fromEntries(CATS);const SUBNAME=Object.fromEntries(SUBS);
-const st={tab:"recettes",cat:"all",sub:"",maxt:0,q:"",p30:false,k400:false,sort:"",spe:"monde",origin:""};
+const st={tab:"recettes",cat:"all",sub:"",maxt:0,q:"",p30:false,k400:false,sort:"",spe:"monde",origin:"",wv:"menu"};
 let favs=[];try{favs=JSON.parse(localStorage.getItem("af-favs")||"[]")}catch(e){}
 const saveFavs=()=>{try{localStorage.setItem("af-favs",JSON.stringify(favs))}catch(e){}};
 const norm=s=>(s||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/œ/g,"oe").replace(/æ/g,"ae");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const total=r=>r.prep+r.time+(r.pre?3:0);
 RECIPES.forEach(r=>{r._s=" "+norm([r.t,r.ing.join(" "),r.tags.join(" "),CATNAME[r.c],SUBNAME[r.s]||"",r.x.map(x=>CATNAME[x]).join(" "),r.x.includes("regime")?"regime leger light":"",r.x.includes("proteines")?"proteines proteine sport":"",r.o?r.o.join(" ")+" specialite version airfryer "+(r.o[1]?"france":""):"",r.v.join(" ")].join(" ")).replace(/[^a-z0-9]+/g," ")});
-const inCat=(r,c)=>c==="all"||r.c===c||r.x.includes(c)||(c==="specialites"&&!!r.o);
+const inCat=(r,c)=>c==="all"||(c==="viandes"&&r.vi)||(c==="volaille"&&r.vo)||(c==="poissons"&&r.po)||r.c===c||r.x.includes(c)||(c==="specialites"&&!!r.o);
 const isFrozenRecipe=r=>r.tags.includes("surgele");
 
 function chips(){
@@ -269,6 +289,9 @@ function render(){
     if(st.cat==="all")h+=NOTE;
     if(st.cat==="regime")h+=`<div class="note">🥗 Recettes légères : peu de matière grasse, moins de 400 kcal par portion pour la plupart. Valeurs estimées par portion.</div>`;
     if(st.cat==="proteines")h+=`<div class="note">💪 Recettes riches en protéines : poulet, dinde, poisson, œufs, skyr, tofu, légumineuses. Utilise le filtre « + de 30 g protéines ». Valeurs estimées par portion.</div>`;
+    if(st.cat==="viandes")h+=`<div class="note">🥩 Toutes les recettes avec de la viande (bœuf, porc, agneau, charcuterie) ou de la volaille, des entrées aux plats. Thermomètre conseillé : volaille 74 °C, porc 63 °C, haché 70 °C.</div>`;
+    if(st.cat==="volaille")h+=`<div class="note">🍗 Poulet, dinde, canard : cuisson à cœur 74 °C (63 °C rosé pour le magret).</div>`;
+    if(st.cat==="poissons")h+=`<div class="note">🐟 Poissons et fruits de mer, toutes catégories confondues. Cuisson à cœur : 55 °C nacré, 63 °C bien cuit.</div>`;
     if(st.cat==="specialites")h+=`<div class="note">🌍 Spécialités du monde et des régions, en <b>version airfryer</b> : recettes authentiques, adaptées à la cuisson à l'air chaud (moins de gras que l'original).</div>`;
     if(st.cat==="surgeles")h+=frozenTable()+`<h3>Recettes avec des produits surgelés</h3>`;
     if(st.cat==="rechauffer")h+=reheatTable()+`<h3>Fiches détaillées</h3>`;
@@ -313,6 +336,7 @@ function drawDetail(){
   <div class="box"><b>🧺 Dans le panier</b><div>${esc(r.fit)}</div></div>
   <div class="box tip"><b>💡 Astuces</b><ul style="margin:6px 0 0;padding-left:18px">${r.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
   ${r.v.length?`<div class="box" style="border-left:4px solid var(--accent2)"><b>🔁 Variantes</b><ul style="margin:6px 0 0;padding-left:18px">${r.v.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`:""}
+  ${accBox(r)}
   <div class="box err"><b>⚠️ Erreurs fréquentes</b><ul style="margin:6px 0 0;padding-left:18px">${r.err.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
   <div style="margin-top:10px">${r.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>
   <p style="font-size:12.5px;color:var(--muted)">Temps indicatifs : vérifie la cuisson, chaque appareil varie.</p></div>`;
@@ -362,22 +386,47 @@ function conseils(){
   ${accessoires()}
   <p style="font-size:12.5px;color:var(--muted)">Caractéristiques : fiche Electro Dépôt et notice Valberg VAL-AF11.5LFLEX (07/2025). Recettes et temps indicatifs : vérifie toujours la cuisson.</p>`;
 }
-/* accessoires compatibles */
+/* accessoires compatibles + liens Amazon.fr (pages produit vérifiées le 17/10/2026, liens propres sans affiliation) */
+const AZ=q=>"https://www.amazon.fr/s?k="+encodeURIComponent(q);
+const ACC={
+ papier:["🧻","Papier cuisson perforé rectangulaire","Cherche « pour friteuse double zone / XXL rectangulaire ». Il se découpe à la taille du fond, se pose <b>sur la grille obligatoire</b> et laisse passer l'air grâce aux trous. Vérifie sur l'emballage qu'il tient au moins 200 °C (souvent 220-230 °C). Toujours tenu par les aliments, jamais seul pendant le préchauffage.",
+   [[AZ("papier cuisson perforé air fryer rectangulaire double zone"),"Rechercher sur Amazon",0]]],
+ silicone:["🟧","Moules silicone rectangulaires « dual zone » (par paire)","Faits pour les paniers à 2 zones : un moule par zone, posé sur la grille. À vérifier : longueur et largeur inférieures à celles d'une zone (tes mesures, moins 1 cm), silicone alimentaire 220 °C ou plus, fond nervuré ou ajouré. À éviter pour les frites : l'air ne passe plus dessous.",
+   [["https://www.amazon.fr/dp/B0CZ3JMFJN","ddLUCK, lot de 2, 21,5 x 15,5 x 8 cm, 220 °C",1,"seulement si chaque zone mesure au moins 22,5 x 16,5 cm et 8 cm de haut ; expédié depuis l'étranger"],[AZ("moule silicone rectangulaire air fryer double zone"),"Rechercher sur Amazon",0]]],
+ ramequin:["🥣","Ramequins en porcelaine ou céramique de 8-10 cm","Allant au four (plus de 200 °C), pas trop hauts (6 cm maxi). Deux ou trois par zone, sur la grille : œufs cocotte, moelleux, baked oats, crumbles.",
+   [["https://www.amazon.fr/dp/B01CGHWFC0","ToCi, 6 ramequins céramique Ø 9 cm, 5 cm de haut, jusqu'à 280 °C",1]]],
+ plat:["🍽️","Petit plat à gratin rectangulaire (céramique, inox, tôle)","Pour les gratins, la tartiflette, la frittata ou la parmigiana, <b>séparateur retiré</b>. Prends un plat d'environ 1 cm plus petit que tes mesures de chaque côté, et pas plus haut que le repère MAX, pour que l'air circule tout autour.",
+   [[AZ("plat à gratin rectangulaire 20 x 15 cm céramique four"),"Rechercher sur Amazon",0]]],
+ moule:["🎂","Moule rond ou à cake en métal ou silicone (15-18 cm)","Pour le cheesecake, le far, le gâteau basque et les brownies, séparateur retiré. Diamètre inférieur à la largeur intérieure moins 2 cm. Hauteur sous le repère MAX.",
+   [[AZ("moule à manqué 16 cm"),"Rechercher sur Amazon",0]]],
+ thermo:["🌡️","Thermomètre à sonde","Aucun souci de taille. C'est l'accessoire le plus utile : 74 °C pour la volaille, 63 °C pour le porc, 55 °C pour le saumon.",
+   [["https://www.amazon.fr/dp/B07QMRKLL4","ThermoPro TP19, sonde pliante, lecture instantanée",1]]],
+ pics:["🍢","Pics à brochettes en inox courts (15-20 cm)","Inox : aucun problème à 200 °C. Leur longueur ne doit pas dépasser celle d'une zone. Les pics en bambou marchent aussi, recoupés et trempés 30 min dans l'eau.",
+   [[AZ("pics brochettes inox 20 cm"),"Rechercher sur Amazon",0]]],
+ pinces:["🥢","Pinces et spatule à embouts silicone","Le panier est en acier antiadhésif (notice) : le silicone ne le raye pas, contrairement au métal.",
+   [[AZ("pince cuisine embouts silicone"),"Rechercher sur Amazon",0]]],
+ spray:["💦","Vaporisateur d'huile rechargeable","La notice conseille de mettre l'huile sur les aliments, jamais dans le panier. Avec un pulvérisateur, une cuillère à café suffit pour tout un panier. Évite les bombes aérosols du commerce, qui encrassent l'antiadhésif.",
+   [["https://www.amazon.fr/dp/B0BLHK66R5","Flairosol Olivia, verre 130 ml",1,"disponibilité variable"],[AZ("vaporisateur huile verre rechargeable cuisine"),"Rechercher sur Amazon",0]]],
+};
+const accLinks=a=>`<span class="alinks">${a[3].map(l=>`<a href="${l[0]}" target="_blank" rel="noopener noreferrer" class="alink${l[2]?"":" s"}">${l[2]?"🛒 Amazon : "+esc(l[1]):"🔎 "+esc(l[1])}</a>${l[3]?`<small>⚠️ ${esc(l[3])}</small>`:""}`).join("")}</span>`;
+function recipeAcc(r){
+  const t=norm(r.t+" "+r.steps.join(" ")+" "+r.ing.join(" ")+" "+r.fit);const k=[];
+  if(/ramequin/.test(t))k.push("ramequin");
+  if(/moules? (en )?silicone|muffin/.test(t))k.push("silicone");
+  if(/\bplat\b|gratin/.test(t))k.push("plat");
+  if(/\bmoule\b(?! silicone)|moule (a |rond|a cake|a manque|a charniere)/.test(t)&&!k.includes("silicone"))k.push("moule");
+  if(/papier/.test(t))k.push("papier");
+  if(/\bpics?\b|brochette/.test(t))k.push("pics");
+  if(/a coeur|thermometre/.test(t)||(r.vi||r.po)&&r.c!=="aperos")k.push("thermo");
+  return [...new Set(k)];
+}
+function accBox(r){const k=recipeAcc(r);if(!k.length)return "";
+  return `<div class="box"><b>🧰 Accessoires utiles</b><ul class="acc" style="padding-left:18px;margin:6px 0 0">${k.map(x=>{const a=ACC[x];return `<li>${a[0]} <b>${a[1]}</b>${accLinks(a)}</li>`}).join("")}</ul><div style="font-size:12px;color:var(--muted);margin-top:4px">Mesure ton panier avant d'acheter (voir Conseils › Accessoires).</div></div>`}
 function accessoires(){
-  const A=[
-   ["🧻","Papier cuisson perforé rectangulaire","Cherche « pour friteuse double zone / XXL rectangulaire ». Il se découpe à la taille du fond, se pose <b>sur la grille obligatoire</b> et laisse passer l'air grâce aux trous. Vérifie sur l'emballage qu'il tient au moins 200 °C (souvent 220-230 °C). Toujours tenu par les aliments, jamais seul pendant le préchauffage."],
-   ["🟧","Moules silicone rectangulaires « dual zone » (par paire)","Faits pour les paniers à 2 zones : un moule par zone, posé sur la grille. À vérifier : longueur et largeur inférieures à celles d'une zone (tes mesures, moins 1 cm), silicone alimentaire 220 °C ou plus, fond nervuré ou ajouré. À éviter pour les frites : l'air ne passe plus dessous."],
-   ["🥣","Ramequins en porcelaine ou céramique de 8-10 cm","Allant au four (plus de 200 °C), pas trop hauts (6 cm maxi). Deux ou trois par zone, sur la grille : œufs cocotte, moelleux, baked oats, crumbles."],
-   ["🍽️","Petit plat à gratin rectangulaire (céramique, inox, tôle)","Pour les gratins, la tartiflette, la frittata ou la parmigiana, <b>séparateur retiré</b>. Prends un plat d'environ 1 cm plus petit que tes mesures de chaque côté, et pas plus haut que le repère MAX, pour que l'air circule tout autour."],
-   ["🎂","Moule rond ou à cake en métal ou silicone (15-18 cm)","Pour le cheesecake, le far, le gâteau basque et les brownies, séparateur retiré. Diamètre inférieur à la largeur intérieure moins 2 cm. Hauteur sous le repère MAX."],
-   ["🌡️","Thermomètre à sonde","Aucun souci de taille. C'est l'accessoire le plus utile : 74 °C pour la volaille, 63 °C pour le porc, 55 °C pour le saumon."],
-   ["🍢","Pics à brochettes en inox courts (15-20 cm)","Inox : aucun problème à 200 °C. Leur longueur ne doit pas dépasser celle d'une zone. Les pics en bambou marchent aussi, recoupés et trempés 30 min dans l'eau."],
-   ["🥢","Pinces et spatule à embouts silicone","Le panier est en acier antiadhésif (notice) : le silicone ne le raye pas, contrairement au métal."],
-   ["💦","Vaporisateur d'huile rechargeable","La notice conseille de mettre l'huile sur les aliments, jamais dans le panier. Avec un pulvérisateur, une cuillère à café suffit pour tout un panier. Évite les bombes aérosols du commerce, qui encrassent l'antiadhésif."],
-  ];
-  return `<div class="box"><b>🧰 Accessoires compatibles avec ta Valberg VAL-AF11.5LFLEX</b>
+  return `<div class="box" id="accessoires"><b>🧰 Accessoires compatibles avec ta Valberg VAL-AF11.5LFLEX</b>
   <p style="font-size:13.5px;margin:6px 0">La notice ne donne pas les dimensions intérieures du panier. L'appareil mesure 49,5 x 30,4 x 36,3 cm (largeur x profondeur x hauteur) : le panier unique est forcément nettement plus petit, et chaque zone en fait à peu près la moitié avec le séparateur. <b>Avant d'acheter, mesure l'intérieur avec la grille en place</b> (longueur, largeur, puis hauteur jusqu'au repère MAX) et retire 1 cm de chaque côté : c'est ta taille maximale d'accessoire. Ne garde que ceux qui supportent au moins 200 °C et qui se posent <b>sur la grille</b>, que la notice impose.</p>
-  <ul class="acc" style="padding-left:18px;margin:6px 0 0">${A.map(a=>`<li>${a[0]} <b>${a[1]}</b> : ${a[2]}</li>`).join("")}</ul></div>
+  <ul class="acc" style="padding-left:18px;margin:6px 0 0">${Object.values(ACC).map(a=>`<li>${a[0]} <b>${a[1]}</b> : ${a[2]}${accLinks(a)}</li>`).join("")}</ul>
+  <p style="font-size:12px;color:var(--muted);margin:6px 0 0">🛒 = fiche produit Amazon.fr vérifiée le 17/10/2026 (prix et stock changent). 🔎 = recherche Amazon.fr : choisis un modèle dont les dimensions passent sous tes mesures. Liens sans affiliation.</p></div>
   <div class="box err"><b>🚫 À éviter avec ce modèle</b><ul style="padding-left:18px;margin:6px 0 0">
   <li><b>Kits ronds « 7 ou 8 pouces »</b> (moule de 18-20 cm, grille à pieds, support à brochettes) faits pour les paniers carrés simples : trop larges pour une zone, et ils ne se posent pas bien sur la grille de fond.</li>
   <li><b>Grilles surélevées ou double étage</b> : sur la grille obligatoire, elles risquent de trop approcher la résistance.</li>
@@ -385,14 +434,22 @@ function accessoires(){
   <li>Plats en verre non prévus pour le four, en plastique ou en bois.</li>
   <li>Accessoires vendus « pour Ninja, Cosori… » sans dimensions : achète-les seulement si leurs dimensions passent sous tes mesures.</li></ul></div>`;
 }
-/* ===== Ma semaine ===== */
-let week=[];try{week=JSON.parse(localStorage.getItem("af-week")||"[]")}catch(e){}
-if(!Array.isArray(week)||week.length!==14)week=Array(14).fill(null);
-const saveWeek=()=>{try{localStorage.setItem("af-week",JSON.stringify(week))}catch(e){}};
+/* ===== Ma semaine (v3 : petit-déj + midi + soir, personnes, liste de courses) ===== */
+const NS=3;
+let W={s:Array(21).fill(null),ppl:2,ov:{}};
+try{const j=JSON.parse(localStorage.getItem("af-week3")||"null");
+  if(j&&Array.isArray(j.s)&&j.s.length===21)W={s:j.s,ppl:Math.min(12,Math.max(1,+j.ppl||2)),ov:j.ov||{}};
+  else{const o=JSON.parse(localStorage.getItem("af-week")||"null");if(Array.isArray(o)&&o.length===14)o.forEach((id,i)=>{W.s[Math.floor(i/2)*3+1+i%2]=id})}}catch(e){}
+let week=W.s;
+const saveWeek=()=>{W.s=week;try{localStorage.setItem("af-week3",JSON.stringify(W))}catch(e){}};
 const byId=Object.fromEntries(RECIPES.map(r=>[r.id,r]));
+week.forEach((id,i)=>{if(id&&!byId[id])week[i]=null});
 const MEALPOOL=RECIPES.filter(r=>r.p);
+const BREAKPOOL=RECIPES.filter(r=>r.c==="petitdej"||r.x.includes("petitdej"));
+const isBreak=i=>i%3===0;
+const pplOf=i=>W.ov[i]||W.ppl;
 function rngFrom(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
-function genWeek(pool,rng,veg){
+function genMains(pool,rng,veg){
   const key=r=>veg?r.p:MAIN(r);
   for(let a=0;a<300;a++){
     const used=new Set(),out=[],cnt={};let ok=true;
@@ -407,39 +464,122 @@ function genWeek(pool,rng,veg){
   }
   return null;
 }
+function genBreak(rng,pref,excl){
+  const base=BREAKPOOL.filter(r=>!excl||!excl.has(r.id));
+  let pool=base.filter(pref||(()=>true));if(pool.length<7)pool=base.slice();
+  const a=pool.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  const out=[];for(let d=0;d<7;d++)out.push(a[d%a.length].id);return out;
+}
+function genWeek(pool,rng,veg,bpref){
+  const m=genMains(pool,rng,veg);if(!m)return null;const b=genBreak(rng,bpref,new Set(m));
+  const out=[];for(let d=0;d<7;d++)out.push(b[d],m[d*2],m[d*2+1]);return out;
+}
 const THEMES=[
  ["equilibree","⚖️ Équilibrée","Plats complets entre 250 et 650 kcal, en alternant volaille, viande, poisson et végétarien.",r=>r.n&&r.n[0]>=250&&r.n[0]<=650,false],
- ["legere","🥗 Légère / régime","Uniquement des recettes « Régime / léger », pour garder des journées autour de 400-600 kcal sur les deux repas.",r=>r.x.includes("regime"),false],
- ["proteinee","💪 Protéinée / sport","Au moins 25 g de protéines par portion à chaque repas.",r=>r.x.includes("proteines")&&r.n&&r.n[1]>=25,false],
- ["rapide","⚡ Rapide (moins de 30 min)","Préparation et cuisson comprises, pour les soirs pressés.",r=>total(r)<30,false],
+ ["legere","🥗 Légère / régime","Uniquement des recettes « Régime / léger » le midi et le soir, petits-déjeuners légers de préférence.",r=>r.x.includes("regime"),false,r=>r.x.includes("regime")||(r.n&&r.n[0]<350)],
+ ["proteinee","💪 Protéinée / sport","Au moins 25 g de protéines par portion à chaque repas principal, petits-déjeuners protéinés de préférence.",r=>r.x.includes("proteines")&&r.n&&r.n[1]>=25,false,r=>r.n&&r.n[1]>=12],
+ ["rapide","⚡ Rapide (moins de 30 min)","Préparation et cuisson comprises, pour les jours pressés.",r=>total(r)<30,false,r=>total(r)<30],
  ["famille","👨‍👩‍👧 Famille","Des classiques que les enfants aiment : nuggets, poulet, gratins, fajitas…",r=>r.fam,false],
- ["vege","🌱 Végétarienne","Sans viande ni poisson, en alternant œufs, légumineuses, tofu et fromage.",r=>VEG.has(r.p),true],
+ ["vege","🌱 Végétarienne","Sans viande ni poisson, en alternant œufs, légumineuses, tofu et fromage.",r=>VEG.has(r.p),true,r=>!r.vi&&!r.po],
 ];
 const weekSeed=(()=>{const d=new Date();const j=new Date(d.getFullYear(),0,1);return d.getFullYear()*100+Math.floor((d-j)/604800000)})();
-const SUGG=THEMES.map((t,i)=>{const pool=MEALPOOL.filter(t[3]);const ids=genWeek(pool,rngFrom(weekSeed*31+i),t[4]);return ids?{k:t[0],name:t[1],desc:t[2],ids,veg:t[4]}:null}).filter(Boolean);
+const SUGG=THEMES.map((t,i)=>{const pool=MEALPOOL.filter(t[3]);const ids=genWeek(pool,rngFrom(weekSeed*31+i),t[4],t[5]);return ids?{k:t[0],name:t[1],desc:t[2],ids,veg:t[4]}:null}).filter(Boolean);
 function dayTot(ids){let k=0,p=0,n=0,m=0;ids.forEach(id=>{const r=byId[id];if(!r)return;m++;if(r.n){k+=r.n[0];p+=r.n[1];n++}});return {k,p,partial:n<m,any:n>0}}
 const totTxt=t=>t.any?`≈ ${t.k} kcal · ${t.p} g prot.${t.partial?" (partiel)":""}`:"";
+const short=(t,n)=>t.length>n?t.slice(0,n-1)+"…":t;
+function pplSel(i){const v=W.ov[i]||0;return `<select class="ppl" data-wppl="${i}" aria-label="Nombre de personnes pour ce repas">${[0,1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<option value="${n}"${n===v?" selected":""}>${n?"👥 "+n:"👥 Auto"}</option>`).join("")}</select>`}
 function weekView(){
-  let h=`<h2>📅 Ma semaine</h2><div class="btnrow"><button class="btn pri" id="wsurprise">🎲 Me surprendre</button><button class="btn" id="wclear">🗑️ Vider</button></div>`;
-  h+=`<p style="font-size:12.5px;color:var(--muted);margin:0 0 4px">Touche « + Ajouter » pour choisir un plat, 🔀 pour l'échanger contre un plat proche (même type de protéine), ✕ pour le retirer. Totaux : valeurs estimées par portion, midi + soir, pour les plats seuls (ajoute tes accompagnements).</p>`;
+  const nb=week.filter(Boolean).length;
+  let h=`<h2>📅 Ma semaine</h2><div class="seg"><button class="${st.wv!=="courses"?"on":""}" data-wv="menu">📅 Menu</button><button class="${st.wv==="courses"?"on":""}" data-wv="courses">🛒 Courses${nb?` (${nb} repas)`:""}</button></div>`;
+  h+=`<div class="pplbar"><span>👥 Personnes <small>(par défaut, chaque repas peut changer)</small></span><div class="step"><button data-gppl="-1" aria-label="Moins de personnes">−</button><b id="gppl">${W.ppl}</b><button data-gppl="1" aria-label="Plus de personnes">+</button></div></div>`;
+  if(st.wv==="courses")return h+coursesView();
+  h+=`<div class="btnrow"><button class="btn pri" id="wsurprise">🎲 Me surprendre</button><button class="btn" id="wclear">🗑️ Vider la semaine</button></div>`;
+  h+=`<p style="font-size:12.5px;color:var(--muted);margin:0 0 4px">« + Ajouter » pour choisir un plat, 🔀 pour l'échanger contre un plat proche, ✕ pour le retirer. « 👥 Auto » suit le nombre de personnes par défaut ; choisis un autre nombre pour un repas précis (invités…). La liste de courses en tient compte. Totaux : valeurs estimées par portion (petit-déj + midi + soir), plats seuls.</p>`;
   DAYS.forEach((d,di)=>{
-    const ids=[week[di*2],week[di*2+1]].filter(Boolean);const t=dayTot(ids);
+    const ids=[0,1,2].map(m=>week[di*3+m]).filter(Boolean);const t=dayTot(ids);
     h+=`<div class="day"><h4>${d}<small>${totTxt(t)}</small></h4>`;
-    MEALS.forEach((m,mi)=>{const i=di*2+mi,r=byId[week[i]];
-      h+=`<div class="slot"><span class="lb">${m}</span>${r?`<button class="rc" data-open="${r.id}">${r.e} ${esc(r.t)}<small>${r.p?PNAME[MAIN(r)]+" · ":""}${r.n?r.n[0]+" kcal · "+r.n[1]+" g prot.":""}</small></button><button class="ib" data-wshuf="${i}" aria-label="Échanger">🔀</button><button class="ib" data-wdel="${i}" aria-label="Retirer">✕</button>`:`<button class="add" data-wadd="${i}">+ Ajouter</button>`}</div>`;});
+    MEALS.forEach((m,mi)=>{const i=di*3+mi,r=byId[week[i]];
+      h+=`<div class="slot"><span class="lb">${m}</span>${r?`<button class="rc" data-open="${r.id}">${r.e} ${esc(r.t)}<small>${r.p?PNAME[MAIN(r)]+" · ":""}${r.n?r.n[0]+" kcal · "+r.n[1]+" g prot.":""}</small></button>${pplSel(i)}<button class="ib" data-wshuf="${i}" aria-label="Échanger">🔀</button><button class="ib" data-wdel="${i}" aria-label="Retirer">✕</button>`:`<button class="add" data-wadd="${i}">+ Ajouter</button>`}</div>`;});
     h+=`</div>`;
   });
-  h+=`<h2>💡 Suggestions de menus</h2><p style="font-size:13px;color:var(--muted);margin:-4px 0 6px">Des semaines toutes prêtes, renouvelées chaque semaine. Aucun plat ne se répète, et la même protéine ne revient jamais deux repas de suite.</p>`;
+  if(nb)h+=`<button class="big" data-wv="courses">🛒 Voir la liste de courses</button>`;
+  h+=`<h2>💡 Suggestions de menus</h2><p style="font-size:13px;color:var(--muted);margin:-4px 0 6px">Des semaines toutes prêtes (petit-déj, midi, soir), renouvelées chaque semaine. Aucun plat ne se répète, et la même protéine ne revient jamais deux repas de suite.</p>`;
   SUGG.forEach(s=>{
-    h+=`<div class="sug" id="sug-${s.k}"><h3>${s.name}</h3><p>${s.desc}</p><table class="mini"><tr><th>Jour</th><th>Midi</th><th>Soir</th></tr>${DAYS.map((d,di)=>{const a=byId[s.ids[di*2]],b=byId[s.ids[di*2+1]];const t=dayTot([a.id,b.id]);return `<tr><td><b>${d.slice(0,3)}</b>${t.any?`<br><small>${t.k} kcal<br>${t.p} g prot.</small>`:""}</td><td>${a.e} ${esc(a.t)}</td><td>${b.e} ${esc(b.t)}</td></tr>`}).join("")}</table><button class="big" data-wuse="${s.k}" style="margin-bottom:0">Utiliser ce menu</button></div>`;
+    h+=`<div class="sug" id="sug-${s.k}"><h3>${s.name}</h3><p>${s.desc}</p><table class="mini"><tr><th>Jour</th><th>Petit-déj</th><th>Midi</th><th>Soir</th></tr>${DAYS.map((d,di)=>{const rs=[0,1,2].map(m=>byId[s.ids[di*3+m]]);const t=dayTot(rs.map(r=>r.id));return `<tr><td><b>${d.slice(0,3)}</b>${t.any?`<br><small>${t.k} kcal<br>${t.p} g prot.</small>`:""}</td>${rs.map(r=>`<td>${r.e} ${esc(r.t)}</td>`).join("")}</tr>`}).join("")}</table><button class="big" data-wuse="${s.k}" style="margin-bottom:0">Utiliser ce menu</button></div>`;
   });
   return h;
 }
-function fillWeek(ids){if(week.some(Boolean)&&!confirm("Remplacer le menu actuel de ta semaine ?"))return;week=ids.slice();saveWeek();render();window.scrollTo(0,0)}
+/* ----- liste de courses ----- */
+const AISLES=["Fruits & légumes","Boucherie / Volaille","Poisson","Crèmerie / œufs","Épicerie","Épices / condiments","Surgelés","Boulangerie","Placard (à vérifier)"];
+const AICON=["🥕","🥩","🐟","🧀","🥫","🧂","🧊","🥖","🗄️"];
+let checked={};try{checked=JSON.parse(localStorage.getItem("af-courses")||"{}")||{}}catch(e){}
+const saveChecked=()=>{try{localStorage.setItem("af-courses",JSON.stringify(checked))}catch(e){}};
+const UPL={tranche:"tranches",gousse:"gousses",pot:"pots",boîte:"boîtes",feuille:"feuilles",sachet:"sachets",filet:"filets",brin:"brins",poignée:"poignées",bouquet:"bouquets",bâton:"bâtons",rondelle:"rondelles",botte:"bottes",noix:"noix"};
+function buildCourses(){
+  const map={};let meals=0;
+  week.forEach((id,i)=>{const r=byId[id];if(!r)return;meals++;const f=pplOf(i)/r.srv;
+    r.sh.forEach(([key,name,a,q,u])=>{const k=a+"|"+key;const e=map[k]||(map[k]={k,name,a,q:{},free:false,rec:new Set()});
+      e.rec.add(r.t);if(q==null||!u){e.free=true;return}e.q[u]=(e.q[u]||0)+q*f;});
+  });
+  return {meals,items:Object.values(map)};
+}
+const trim=n=>String(+n.toFixed(2)).replace(".",",");
+function fmtQty(q0){
+  const q=Object.assign({},q0),out=[];
+  if(q.ml&&q["càc"]){q.ml+=q["càc"]*5;delete q["càc"]} /* liquide : 1 c. à s. = 15 ml, 1 c. à c. = 5 ml */
+  if(q.g){const v=q.g;out.push(v>=1000?trim(Math.round(v/10)/100)+" kg":(v>=50?Math.round(v/5)*5:Math.ceil(v))+" g")}
+  if(q.ml){const v=q.ml;out.push(v>=1000?trim(Math.round(v/10)/100)+" L":(v>=50?Math.round(v/5)*5:Math.ceil(v))+" ml")}
+  if(q.pc){out.push(String(Math.ceil(q.pc-0.05)))}
+  if(q["càc"]){const v=q["càc"];out.push(v>=3?trim(Math.ceil(v/3*2)/2)+" c. à s.":trim(Math.ceil(v*2)/2)+" c. à c.")}
+  Object.keys(q).filter(u=>!["g","ml","pc","càc"].includes(u)).forEach(u=>{const n=Math.ceil(q[u]-0.05);out.push(n+" "+(n>1?(UPL[u]||u+"s"):u))});
+  return out.join(" + ");
+}
+function coursesData(){
+  const {meals,items}=buildCourses();
+  const groups=AISLES.map((n,a)=>({a,n,items:items.filter(x=>x.a===a).sort((x,y)=>x.name.localeCompare(y.name,"fr"))})).filter(g=>g.items.length);
+  groups.forEach(g=>g.items.forEach(x=>{x.txt=g.a===8?"":fmtQty(x.q)}));
+  return {meals,groups,n:items.length};
+}
+function coursesView(){
+  const {meals,groups,n}=coursesData();
+  if(!meals)return `<div class="empty">Ta semaine est vide.<br>Ajoute des repas dans « Menu » (ou choisis une suggestion) : la liste de courses se remplit toute seule.</div>`;
+  const done=groups.reduce((s,g)=>s+g.items.filter(x=>checked[x.k]).length,0);
+  let h=`<p style="font-size:13px;color:var(--muted);margin:6px 0">${meals} repas planifiés · ${n} produits · ${done} coché${done>1?"s":""}. Quantités calculées pour le nombre de personnes de chaque repas, ingrédients identiques regroupés. Arrondis vers le haut pour les pièces.</p>`;
+  h+=`<div class="btnrow"><button class="btn pri" id="cshare">📤 Copier / Partager</button><button class="btn" id="wclear">🗑️ Vider la semaine</button></div>`;
+  if(done)h+=`<button class="btn" id="cuncheck" style="display:block;width:100%;margin-bottom:8px">↺ Tout décocher</button>`;
+  groups.forEach(g=>{
+    h+=`<div class="aisle${g.a===8?" placard":""}"><h3>${AICON[g.a]} ${g.n}${g.a===8?"":` <small>${g.items.length}</small>`}</h3>${g.a===8?`<p class="pn">Produits de base : vérifie qu'il t'en reste avant de partir.</p>`:""}`;
+    g.items.forEach(x=>{h+=`<label class="ci${checked[x.k]?" ok":""}"><input type="checkbox" data-ck="${esc(x.k)}"${checked[x.k]?" checked":""}><span class="cn">${esc(x.name)}<small>${esc([...x.rec].join(" · "))}</small></span><b class="cq">${x.txt||(g.a===8?"":"au goût")}</b></label>`});
+    h+=`</div>`;
+  });
+  h+=`<p style="font-size:12px;color:var(--muted)">Les quantités viennent des recettes (portions de base) multipliées par le nombre de personnes. Pense aux accompagnements que tu ajoutes toi-même.</p>`;
+  return h;
+}
+function coursesText(){
+  const {meals,groups}=coursesData();
+  let t=`🛒 Liste de courses (${meals} repas)\n`;
+  groups.forEach(g=>{const it=g.items.filter(x=>!checked[x.k]);if(!it.length)return;t+=`\n${AICON[g.a]} ${g.n}\n`;it.forEach(x=>{t+=`☐ ${x.name}${x.txt?" : "+x.txt:""}\n`})});
+  return t;
+}
+function toast(msg){let el=$("#toast");if(!el){el=document.createElement("div");el.id="toast";document.body.appendChild(el)}el.textContent=msg;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("on"),2200)}
+async function shareCourses(){
+  const text=coursesText();
+  if(navigator.share){try{await navigator.share({title:"Liste de courses",text});return}catch(e){if(e&&e.name==="AbortError")return}}
+  try{await navigator.clipboard.writeText(text);toast("✅ Liste copiée dans le presse-papiers");return}catch(e){}
+  const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
+  let ok=false;try{ok=document.execCommand("copy")}catch(e){}ta.remove();toast(ok?"✅ Liste copiée dans le presse-papiers":"Copie impossible sur ce navigateur");
+}
+window.__af={buildCourses,coursesData,coursesText,W:()=>W};
+function clearWeek(){if(week.some(Boolean)&&confirm("Vider toute la semaine ? Les repas et les cases cochées de la liste de courses seront effacés.")){week=Array(21).fill(null);W.ov={};saveWeek();checked={};saveChecked();render()}}
+function fillWeek(ids){if(week.some(Boolean)&&!confirm("Remplacer le menu actuel de ta semaine ?"))return;week=ids.slice();W.ov={};saveWeek();render();window.scrollTo(0,0)}
 function shuffleSlot(i){
   const cur=byId[week[i]];if(!cur)return;
-  const used=new Set(week.filter(Boolean));const nb=[byId[week[i-1]],byId[week[i+1]]].filter(Boolean);
-  const vegWeek=week.filter(Boolean).every(id=>VEG.has((byId[id]||{}).p));
+  const used=new Set(week.filter(Boolean));
+  if(isBreak(i)){let c=BREAKPOOL.filter(r=>!used.has(r.id));if(!c.length)c=BREAKPOOL.filter(r=>r.id!==cur.id);if(!c.length)return;week[i]=c[Math.floor(Math.random()*c.length)].id;saveWeek();render();return}
+  const mi=i%3,di=Math.floor(i/3);const nbIdx=mi===1?[(di-1)*3+2,di*3+2]:[di*3+1,(di+1)*3+1];
+  const nb=nbIdx.map(j=>byId[week[j]]).filter(Boolean);
+  const mains=week.filter((id,j)=>id&&!isBreak(j));
+  const vegWeek=mains.every(id=>VEG.has((byId[id]||{}).p));
   const key=r=>vegWeek?r.p:MAIN(r);
   let c=MEALPOOL.filter(r=>!used.has(r.id)&&key(r)===key(cur));
   if(cur.n){const near=c.filter(r=>r.n&&Math.abs(r.n[0]-cur.n[0])<=150);if(near.length)c=near}
@@ -448,15 +588,15 @@ function shuffleSlot(i){
   week[i]=c[Math.floor(Math.random()*c.length)].id;saveWeek();render();
 }
 let pickSlot=-1;
-function openPick(i){pickSlot=i;$("#picktitle").textContent=`${DAYS[i>>1]} · ${MEALS[i%2]}`;$("#pq").value="";drawPick();$("#pick").classList.add("open")}
+function openPick(i){pickSlot=i;$("#picktitle").textContent=`${DAYS[Math.floor(i/3)]} · ${MEALS[i%3]}`;$("#pq").value="";drawPick();$("#pick").classList.add("open")}
 function drawPick(){
   const words=norm($("#pq").value).replace(/[^a-z0-9]+/g," ").split(/\s+/).filter(Boolean);
-  const list=(words.length?RECIPES:MEALPOOL).filter(r=>words.every(w=>r._s.includes(" "+w))).slice(0,80);
+  const list=(words.length?RECIPES:(isBreak(pickSlot)?BREAKPOOL:MEALPOOL)).filter(r=>words.every(w=>r._s.includes(" "+w))).slice(0,80);
   $("#plist").innerHTML=list.length?list.map(r=>`<button class="card" data-pickr="${r.id}"><div class="emo">${r.e}</div><div style="min-width:0"><div class="t" style="font-size:15px">${esc(r.t)}</div><div class="meta">${r.p?`<span>${PNAME[MAIN(r)]}</span>`:""}${r.n?`<span>🔥 ${r.n[0]} kcal</span><span>💪 ${r.n[1]} g</span>`:""}</div></div></button>`).join(""):`<div class="empty">Aucune recette.</div>`;
 }
 function openSlotPick(r){
   $("#slottitle").textContent=`${r.e} ${r.t}`;
-  $("#sgrid").innerHTML=`<span></span><b style="text-align:center;font-size:13px">Midi</b><b style="text-align:center;font-size:13px">Soir</b>`+DAYS.map((d,di)=>`<b style="font-size:13px">${d.slice(0,3)}</b>`+[0,1].map(mi=>{const i=di*2+mi,x=byId[week[i]];return `<button class="${x?"full":""}" data-slotset="${i}">${x?x.e+" "+esc(x.t.length>18?x.t.slice(0,17)+"…":x.t):"+ Libre"}</button>`}).join("")).join("");
+  $("#sgrid").innerHTML=`<span></span>`+["Petit-déj","Midi","Soir"].map(m=>`<b style="text-align:center;font-size:12px">${m}</b>`).join("")+DAYS.map((d,di)=>`<b style="font-size:13px">${d.slice(0,3)}</b>`+[0,1,2].map(mi=>{const i=di*3+mi,x=byId[week[i]];return `<button class="${x?"full":""}" data-slotset="${i}">${x?x.e+" "+esc(short(x.t,14)):"+ Libre"}</button>`}).join("")).join("");
   $("#slotpick").classList.add("open");
 }
 /* minuteur */
@@ -496,7 +636,12 @@ document.addEventListener("click",e=>{
   const ws=e.target.closest("[data-wshuf]");if(ws){shuffleSlot(+ws.dataset.wshuf);return}
   const wu=e.target.closest("[data-wuse]");if(wu){const s=SUGG.find(x=>x.k===wu.dataset.wuse);if(s)fillWeek(s.ids);return}
   if(e.target.closest("#wsurprise")){const ids=genWeek(MEALPOOL,Math.random,false);if(ids)fillWeek(ids);return}
-  if(e.target.closest("#wclear")){if(week.some(Boolean)&&confirm("Vider toute la semaine ?")){week=Array(14).fill(null);saveWeek();render()}return}
+  if(e.target.closest("#wclear")){clearWeek();return}
+  const wv=e.target.closest("[data-wv]");if(wv){st.wv=wv.dataset.wv;render();window.scrollTo(0,0);return}
+  const gp=e.target.closest("[data-gppl]");if(gp){W.ppl=Math.min(12,Math.max(1,W.ppl+ +gp.dataset.gppl));saveWeek();render();return}
+  if(e.target.closest("#cshare")){shareCourses();return}
+  if(e.target.closest("#cuncheck")){checked={};saveChecked();render();return}
+  if(e.target.closest("select.ppl")||e.target.closest("label.ci"))return;
   const pr=e.target.closest("[data-pickr]");if(pr){week[pickSlot]=pr.dataset.pickr;saveWeek();$("#pick").classList.remove("open");render();return}
   if(e.target.closest("#pickclose")||e.target.id==="pick"){$("#pick").classList.remove("open");return}
   if(e.target.closest("#dweek")){openSlotPick(cur);return}
@@ -514,6 +659,10 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{if(e.key==="Enter"){const o=e.target.closest&&e.target.closest("[data-open]");if(o)openDetail(o.dataset.open)}});
 $("#pq").addEventListener("input",drawPick);
+document.addEventListener("change",e=>{
+  const sl=e.target.closest("[data-wppl]");if(sl){const v=+sl.value;if(v)W.ov[sl.dataset.wppl]=v;else delete W.ov[sl.dataset.wppl];saveWeek();render();return}
+  const ck=e.target.closest("[data-ck]");if(ck){if(ck.checked)checked[ck.dataset.ck]=1;else delete checked[ck.dataset.ck];saveChecked();ck.closest("label").classList.toggle("ok",ck.checked);return}
+});
 $("#q").addEventListener("input",e=>{st.q=e.target.value.trim();$("#qx").style.display=st.q?"block":"none";render()});
 $("#qx").onclick=()=>{$("#q").value="";st.q="";$("#qx").style.display="none";render();$("#q").focus()};
 window.addEventListener("popstate",()=>{const m=location.hash.match(/^#r\/(.+)$/);if(m)openDetail(m[1],false);else closeDetail()});
