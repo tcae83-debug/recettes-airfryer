@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Recettes Airfryer</title>
+<meta name="description" content="Recettes et conseils pour la friteuse sans huile Valberg VAL-AF11.5LFLEX">
+<meta name="theme-color" content="#f6efe6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1714" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Recettes Airfryer">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#f6efe6;--card:#fffaf4;--ink:#2b211b;--muted:#7a6a5e;--line:#eadfd2;
+  --accent:#e2622b;--accent2:#f29a3d;--soft:#fde6d6;--ok:#2f8f5b;--warn:#b5482a;
+  --shadow:0 2px 10px rgba(80,45,20,.08);--r:18px;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#1b1714;--card:#26201c;--ink:#f3e9df;--muted:#b3a294;--line:#3a312b;
+  --accent:#f07a3e;--accent2:#f5a04a;--soft:#3d2a20;--ok:#5cc58b;--warn:#f08a6a;
+  --shadow:0 2px 10px rgba(0,0,0,.35);}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 16px 8px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{font-size:26px;margin:2px 0 8px;letter-spacing:-.5px}
+h1 span{color:var(--accent)}
+.sub{font-size:13px;color:var(--muted);margin:-6px 0 10px}
+.search{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 12px;box-shadow:var(--shadow)}
+.search input{flex:1;border:0;background:none;color:var(--ink);font-size:17px;padding:13px 0;outline:none;min-width:0}
+.search .x{font-size:20px;color:var(--muted);padding:6px;display:none}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none;margin:0 -16px;padding-left:16px;padding-right:16px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:9px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:15px;white-space:nowrap;min-height:40px}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.chip.small{padding:6px 12px;font-size:14px;min-height:34px}
+main{padding:6px 16px 20px}
+.note{background:var(--soft);border-radius:14px;padding:10px 12px;font-size:13.5px;margin:6px 0 12px}
+.count{font-size:13px;color:var(--muted);margin:4px 2px 8px}
+.list{display:grid;gap:10px}
+.card{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;box-shadow:var(--shadow);text-align:left;width:100%}
+.emo{flex:0 0 52px;height:52px;border-radius:14px;background:var(--soft);display:grid;place-items:center;font-size:28px}
+.card .t{font-weight:650;font-size:16.5px;line-height:1.25}
+.meta{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:13px;color:var(--muted);margin-top:4px}
+.fav{margin-left:auto;font-size:22px;padding:8px;flex:0 0 auto}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);font-size:14px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--soft);font-size:12.5px;text-transform:uppercase;letter-spacing:.3px}
+td.n{white-space:nowrap;font-weight:600}
+h2{font-size:20px;margin:18px 0 10px}
+h3{font-size:17px;margin:18px 0 8px}
+/* détail */
+#detail{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;transform:translateY(100%);transition:transform .25s ease;-webkit-overflow-scrolling:touch}
+#detail.open{transform:none}
+.dtop{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:calc(8px + env(safe-area-inset-top)) 10px 8px;background:var(--bg);z-index:2}
+.round{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;font-size:20px;box-shadow:var(--shadow)}
+.dwrap{padding:0 18px 40px}
+.hero{font-size:64px;text-align:center;margin:0 0 4px}
+.dtitle{font-size:24px;font-weight:750;text-align:center;margin:0 0 12px;letter-spacing:-.3px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 4px;text-align:center}
+.stat b{display:block;font-size:18px}
+.stat small{color:var(--muted);font-size:11.5px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin:10px 0;box-shadow:var(--shadow)}
+.serv{display:flex;align-items:center;justify-content:space-between}
+.step{display:flex;align-items:center;gap:10px}
+.step button{width:40px;height:40px;border-radius:50%;background:var(--soft);font-size:22px;font-weight:700;color:var(--accent)}
+ul.ing{list-style:none;padding:0;margin:8px 0 0}
+ul.ing li{padding:8px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px}
+ul.ing li:last-child{border:0}
+ul.ing input{width:22px;height:22px;accent-color:var(--accent);flex:0 0 auto}
+ol.steps{padding-left:0;margin:6px 0 0;list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;padding:8px 0 8px 40px;position:relative}
+ol.steps li:before{content:counter(s);position:absolute;left:0;top:7px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px}
+.tag{display:inline-block;padding:3px 9px;border-radius:999px;background:var(--soft);font-size:12.5px;margin:2px 4px 2px 0}
+.tip{border-left:4px solid var(--ok)}
+.err{border-left:4px solid var(--warn)}
+.big{display:block;width:100%;padding:15px;border-radius:14px;background:var(--accent);color:#fff;font-weight:700;font-size:17px;text-align:center;margin:12px 0}
+/* nav */
+nav{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;padding:8px 0 10px;font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;min-height:60px}
+nav button i{font-style:normal;font-size:22px}
+nav button.on{color:var(--accent);font-weight:650}
+/* minuteur */
+#timer{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.45);display:none;align-items:flex-end}
+#timer.open{display:flex}
+.sheet{background:var(--bg);width:100%;border-radius:22px 22px 0 0;padding:18px 18px calc(24px + env(safe-area-inset-bottom))}
+.clock{font-size:64px;font-weight:300;text-align:center;font-variant-numeric:tabular-nums;margin:4px 0 10px}
+.grid3{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.grid3 button{padding:12px 0;border-radius:12px;background:var(--card);border:1px solid var(--line);font-weight:600}
+.row{display:flex;gap:8px;margin-top:10px}
+.row button{flex:1;padding:14px;border-radius:14px;font-weight:700}
+.go{background:var(--accent);color:#fff}.stop{background:var(--card);border:1px solid var(--line)!important}
+#pill{position:fixed;right:14px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:11;background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;box-shadow:var(--shadow);display:none;font-variant-numeric:tabular-nums}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px}
+.spec dt{color:var(--muted)}.spec dd{margin:0;font-weight:600}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header id="hdr">
+  <div class="top"><h1>Recettes <span>Airfryer</span></h1></div>
+  <div class="sub">Valberg 11,5 L Flex · 2 zones · 80-200 °C</div>
+  <div class="search"><span aria-hidden="true">🔎</span><input id="q" type="search" placeholder="Poulet, frites, chèvre, 15 min…" autocomplete="off" aria-label="Rechercher une recette"><button class="x" id="qx" aria-label="Effacer">✕</button></div>
+  <div class="chips" id="cats"></div>
+  <div class="chips" id="subs" style="padding-top:6px"></div>
+</header>
+<main id="main"></main>
+
+<section id="detail" aria-modal="true" role="dialog"></section>
+
+<div id="timer"><div class="sheet">
+  <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:18px">⏱️ Minuteur</b><button class="round" id="tclose" aria-label="Fermer">✕</button></div>
+  <div class="clock" id="tclock">10:00</div>
+  <div class="grid3" id="tpresets"></div>
+  <div class="row"><button class="stop" id="tminus">− 1 min</button><button class="stop" id="tplus">+ 1 min</button></div>
+  <div class="row"><button class="stop" id="treset">Arrêter</button><button class="go" id="tgo">Démarrer</button></div>
+  <p style="font-size:12.5px;color:var(--muted);margin:10px 0 0">Garde la page ouverte : sur iPhone, le son peut être coupé si l'écran se verrouille. Le minuteur de l'appareil reste la référence.</p>
+</div></div>
+<button id="pill"></button>
+
+<nav>
+  <button data-tab="recettes" class="on"><i>🍽️</i>Recettes</button>
+  <button data-tab="favoris"><i>♥</i>Favoris</button>
+  <button data-tab="minuteur"><i>⏱️</i>Minuteur</button>
+  <button data-tab="conseils"><i>💡</i>Conseils</button>
+</nav>
+
+<script src="recipes.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const CATS=[["all","Tout"],["entrees","Entrées"],["plats","Plats"],["accomp","Accompagnements"],["desserts","Desserts"],["aperos","Apéritifs & snacks"],["petitdej","Petit-déjeuner"],["surgeles","Surgelés"],["rechauffer","Réchauffer"]];
+const SUBS=[["","Tous les plats"],["viande","Viande"],["volaille","Volaille"],["poisson","Poisson"],["vegetarien","Végétarien"]];
+const TIMES=[[0,"Toutes durées"],[15,"< 15 min"],[30,"< 30 min"]];
+const CATNAME=Object.fromEntries(CATS);const SUBNAME=Object.fromEntries(SUBS);
+const st={tab:"recettes",cat:"all",sub:"",maxt:0,q:""};
+let favs=[];try{favs=JSON.parse(localStorage.getItem("af-favs")||"[]")}catch(e){}
+const saveFavs=()=>{try{localStorage.setItem("af-favs",JSON.stringify(favs))}catch(e){}};
+const norm=s=>(s||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/œ/g,"oe").replace(/æ/g,"ae");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const total=r=>r.prep+r.time+(r.pre?3:0);
+RECIPES.forEach(r=>{r._s=" "+norm([r.t,r.ing.join(" "),r.tags.join(" "),CATNAME[r.c],SUBNAME[r.s]||""].join(" ")).replace(/[^a-z0-9]+/g," ")});
+const isFrozenRecipe=r=>r.tags.includes("surgele");
+
+function chips(){
+  $("#cats").innerHTML=CATS.map(([k,v])=>`<button class="chip ${st.cat===k?"on":""}" data-cat="${k}">${v}</button>`).join("");
+  let h="";
+  if(st.cat==="plats")h+=SUBS.map(([k,v])=>`<button class="chip small ${st.sub===k?"on":""}" data-sub="${k}">${v}</button>`).join("");
+  if(st.cat!=="surgeles"&&st.cat!=="rechauffer")h+=TIMES.map(([k,v])=>`<button class="chip small ${st.maxt===k?"on":""}" data-t="${k}">${v}</button>`).join("");
+  $("#subs").innerHTML=h;$("#subs").style.display=(st.tab==="recettes"||st.tab==="favoris")&&h?"flex":"none";
+  $("#cats").style.display=st.tab==="recettes"?"flex":"none";
+}
+function filtered(){
+  const words=norm(st.q).replace(/[^a-z0-9]+/g," ").split(/\s+/).filter(Boolean);
+  return RECIPES.filter(r=>{
+    if(st.tab==="favoris"&&!favs.includes(r.id))return false;
+    if(st.tab==="recettes"&&!words.length){
+      if(st.cat==="surgeles"){if(!isFrozenRecipe(r))return false}
+      else if(st.cat!=="all"&&r.c!==st.cat)return false;
+      if(st.cat==="plats"&&st.sub&&r.s!==st.sub)return false;
+    }
+    if(st.maxt&&total(r)>=st.maxt)return false;
+    return words.every(w=>r._s.includes(" "+w));
+  });
+}
+function card(r){
+  const f=favs.includes(r.id);
+  return `<div class="card" role="button" tabindex="0" data-open="${r.id}"><div class="emo">${r.e}</div><div style="min-width:0"><div class="t">${esc(r.t)}</div><div class="meta"><span>🌡️ ${r.temp} °C</span><span>⏲️ ${r.time} min</span><span>🕒 ${total(r)} min au total</span></div></div><button class="fav" data-fav="${r.id}" aria-label="${f?"Retirer des":"Ajouter aux"} favoris">${f?"❤️":"🤍"}</button></div>`;
+}
+const NOTE=`<div class="note">⚠️ <b>Temps indicatifs : vérifie la cuisson, chaque appareil varie.</b> Températures à cœur : volaille 74 °C · porc 63 °C (+3 min de repos) · haché 70 °C · bœuf saignant 52 °C, à point 57 °C · poisson 55-63 °C.</div>`;
+function frozenTable(){
+  return `<h2>🧊 Surgelés : temps courants</h2><table><tr><th>Aliment</th><th>°C</th><th>Min</th><th>Secouer</th></tr>${FROZEN.map(f=>`<tr><td>${f[0]} ${esc(f[1])}${f[5]?`<br><small style="color:var(--muted)">${esc(f[5])}</small>`:""}</td><td class="n">${f[2]}</td><td class="n">${f[3]}</td><td>${f[4]}</td></tr>`).join("")}</table><p style="font-size:12.5px;color:var(--muted)">Pas besoin de décongeler. Une seule couche, secoue à mi-cuisson. Les lignes « Valberg » viennent du guide de cuisson de la notice ; les autres sont des repères courants.</p>`;
+}
+function reheatTable(){
+  return `<h2>♨️ Réchauffer : repères</h2><table><tr><th>Aliment</th><th>°C</th><th>Min</th></tr>${REHEAT.map(f=>`<tr><td>${f[0]} ${esc(f[1])}</td><td class="n">${f[2]}</td><td class="n">${f[3]}</td></tr>`).join("")}</table><p style="font-size:12.5px;color:var(--muted)">La notice Valberg conseille 150 °C pendant 10 min maximum pour réchauffer. Vérifie que le cœur est bien chaud.</p>`;
+}
+function render(){
+  chips();
+  const m=$("#main");
+  if(st.tab==="conseils"){m.innerHTML=conseils();window.scrollTo(0,0);return}
+  const list=filtered();
+  let h="";
+  if(st.tab==="recettes"&&!st.q){
+    if(st.cat==="all")h+=NOTE;
+    if(st.cat==="surgeles")h+=frozenTable()+`<h3>Recettes avec des produits surgelés</h3>`;
+    if(st.cat==="rechauffer")h+=reheatTable()+`<h3>Fiches détaillées</h3>`;
+  }
+  if(st.tab==="favoris")h+=`<h2>♥ Mes favoris</h2>`;
+  h+=`<div class="count">${list.length} recette${list.length>1?"s":""}${st.q?` pour « ${esc(st.q)} »`:""}</div>`;
+  h+=list.length?`<div class="list">${list.map(card).join("")}</div>`:`<div class="empty">${st.tab==="favoris"?"Aucun favori pour l'instant.<br>Touche 🤍 sur une recette pour l'ajouter.":"Aucune recette trouvée.<br>Essaie un autre mot."}</div>`;
+  m.innerHTML=h;
+}
+/* portions */
+function scaleLine(line,k){
+  if(k===1)return esc(line);
+  const m=line.match(/^(\d+(?:[.,]\d+)?|\d+\/\d+)(\s.*)$/);
+  if(!m)return esc(line);
+  let v=m[1].includes("/")?(+m[1].split("/")[0])/(+m[1].split("/")[1]):parseFloat(m[1].replace(",","."));
+  v*=k;
+  let out;
+  if(v>=10)out=String(Math.round(v));
+  else{const q=Math.round(v*4)/4;const fr={0.25:"1/4",0.5:"1/2",0.75:"3/4"};const ip=Math.floor(q),dp=+(q-ip).toFixed(2);
+    out=q===0?"1 pincée":(ip?String(ip):"")+(dp?(ip?" ":"")+fr[dp]:"")}
+  return `<b>${out}</b>${esc(m[2])}`;
+}
+let cur=null,srv=4;
+const FIXED=new Set(["poulet-entier","rotis-porc","filet-mignon","gateau-yaourt","quiche","crumble","gratin-courgettes","gratin-dauphinois"]);
+function openDetail(id,push){
+  const r=RECIPES.find(x=>x.id===id);if(!r)return;cur=r;srv=r.srv;
+  drawDetail();$("#detail").classList.add("open");$("#detail").scrollTop=0;document.body.style.overflow="hidden";
+  if(push!==false)history.pushState({r:id},"","#r/"+id);
+}
+function drawDetail(){
+  const r=cur,k=srv/r.srv,f=favs.includes(r.id);
+  $("#detail").innerHTML=`<div class="dtop"><button class="round" id="dback" aria-label="Retour">‹</button><button class="round" data-fav="${r.id}" aria-label="Favori">${f?"❤️":"🤍"}</button></div>
+  <div class="dwrap"><div class="hero">${r.e}</div><div class="dtitle">${esc(r.t)}</div>
+  <div class="stats"><div class="stat"><b>${r.temp}°</b><small>Température</small></div><div class="stat"><b>${r.time}′</b><small>Cuisson</small></div><div class="stat"><b>${r.prep}′</b><small>Prépa</small></div><div class="stat"><b>${r.pre?"Oui":"Non"}</b><small>Préchauffer</small></div></div>
+  <button class="big" id="dtimer">⏱️ Lancer un minuteur de ${r.time} min</button>
+  <div class="box"><div class="serv"><b>Ingrédients</b>${FIXED.has(r.id)?`<span><b>${r.srv}</b> pers.</span>`:`<div class="step"><button id="sm" aria-label="Moins de portions">−</button><span><b>${srv}</b> pers.</span><button id="sp" aria-label="Plus de portions">+</button></div>`}</div>${FIXED.has(r.id)?`<div style="font-size:13px;color:var(--muted);margin-top:4px">Pièce entière ou plat unique : pour plus de monde, fais une deuxième fournée.</div>`:""}
+  <ul class="ing">${r.ing.map(i=>`<li><input type="checkbox" aria-label="coché"><span>${scaleLine(i,k)}</span></li>`).join("")}</ul></div>
+  <div class="box"><b>Préparation</b><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></div>
+  <div class="box"><b>🔄 Secouer / retourner</b><div>${esc(r.shake)}</div>${r.pre?`<div style="margin-top:6px"><b>🔥 Préchauffage</b> : 3 min à vide à la température de la recette (pas de fonction dédiée dans la notice, règle-le en mode manuel).</div>`:""}</div>
+  <div class="box"><b>🧺 Dans le panier</b><div>${esc(r.fit)}</div></div>
+  <div class="box tip"><b>💡 Astuces</b><ul style="margin:6px 0 0;padding-left:18px">${r.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
+  <div class="box err"><b>⚠️ Erreurs fréquentes</b><ul style="margin:6px 0 0;padding-left:18px">${r.err.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
+  <div style="margin-top:10px">${r.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>
+  <p style="font-size:12.5px;color:var(--muted)">Temps indicatifs : vérifie la cuisson, chaque appareil varie.</p></div>`;
+}
+function closeDetail(){ $("#detail").classList.remove("open");document.body.style.overflow="";cur=null; }
+/* conseils */
+function conseils(){
+  return `<h2>💡 Conseils</h2>
+  <div class="box"><b>Ta friteuse : Valberg VAL-AF11.5LFLEX</b><dl class="spec" style="margin:8px 0 0">
+  <dt>Capacité</dt><dd>11,5 L (8 pers., 2,7 kg de frites fraîches)</dd>
+  <dt>Zones</dt><dd>1 panier + séparateur amovible = 2 zones</dd>
+  <dt>Température</dt><dd>80 à 200 °C (déshydratation 30-80 °C)</dd>
+  <dt>Minuterie</dt><dd>1 à 60 min (déshydratation jusqu'à 12 h)</dd>
+  <dt>Programmes</dt><dd>Frites, Steak, Poisson, Légumes, Gâteau, Pizza, Volaille, Déshydratation + Manuel</dd>
+  <dt>Lave-vaisselle</dt><dd>Panier, grille et séparateur</dd>
+  <dt>Plus</dt><dd>Hublot éclairé, Cuisson double, Fin synchronisée</dd></dl></div>
+  <div class="box"><b>Les programmes (réglages par défaut)</b><table style="margin-top:8px;box-shadow:none"><tr><th>Programme</th><th>°C</th><th>Durée</th></tr>
+  ${[["Manuel",180,"15 min"],["Frites",200,"22 min"],["Steak",200,"10 min"],["Poisson",200,"20 min"],["Légumes",180,"10 min"],["Gâteau",160,"20 min"],["Pizza",180,"15 min"],["Volaille",200,"35 min"],["Déshydratation",60,"12 h"]].map(p=>`<tr><td>${p[0]}</td><td class="n">${p[1]}</td><td class="n">${p[2]}</td></tr>`).join("")}</table><small style="color:var(--muted)">Tout reste réglable avec +/−.</small></div>
+  <div class="box"><b>🔀 Utiliser les 2 zones</b><ul style="padding-left:18px;margin:6px 0 0">
+  <li><b>Cuisson double</b> : même réglage dans les deux zones (ex. beaucoup de frites).</li>
+  <li><b>Fin synchronisée</b> : règle la zone gauche, puis la droite, puis touche Synchronisation. L'appareil démarre la zone la plus longue d'abord et les deux finissent ensemble (ex. poulet + frites).</li>
+  <li><b>Une seule zone</b> : séparateur en place, active seulement la zone voulue.</li>
+  <li><b>Gros morceaux</b> (poulet entier, rôti, gratin) : retire le séparateur.</li></ul></div>
+  <div class="box tip"><b>✅ Les bons réflexes</b><ul style="padding-left:18px;margin:6px 0 0">
+  <li><b>Grille toujours au fond du panier</b> : la notice interdit de cuire sans elle.</li>
+  <li><b>Ne surcharge pas</b> : une couche, de l'espace entre les morceaux, jamais au-dessus du repère MAX.</li>
+  <li><b>Huile en spray</b> sur les aliments, jamais d'huile versée dans le panier.</li>
+  <li><b>Secoue ou retourne</b> à mi-cuisson, en moins de 30 s (l'appareil refroidit sinon). La cuisson reprend quand tu refermes.</li>
+  <li><b>Préchauffage</b> : la notice n'en parle pas. Pour viandes, panés et pâtes, 3 min à vide en mode manuel donne un meilleur croustillant.</li>
+  <li><b>Sèche</b> les aliments marinés ou lavés : moins de fumée, plus de croustillant.</li>
+  <li><b>Plusieurs aliments</b> : commence par celui qui demande la température la plus basse.</li>
+  <li><b>Réchauffer</b> : 150 °C, 10 min maximum (conseil de la notice).</li>
+  <li><b>Sors les aliments</b> dès la fin : la chaleur résiduelle ramollit les frites.</li></ul></div>
+  <div class="box err"><b>🧻 Papier cuisson et alu, en sécurité</b><ul style="padding-left:18px;margin:6px 0 0">
+  <li>Ne mets jamais de papier ou d'alu seul pendant le préchauffage : la ventilation l'envoie sur la résistance.</li>
+  <li>Le papier doit toujours être tenu par les aliments, et plus petit que le fond du panier (perforé de préférence).</li>
+  <li>Alu : bien serré sur un plat, jamais de bords libres.</li>
+  <li>Laisse 10 cm d'espace libre autour de l'appareil, ne le déplace pas en marche.</li></ul></div>
+  <div class="box"><b>🧽 Nettoyage</b><ul style="padding-left:18px;margin:6px 0 0">
+  <li>Débranche et laisse refroidir au moins 30 min (panier sorti pour aller plus vite).</li>
+  <li>Panier, grille et séparateur : eau chaude savonneuse ou lave-vaisselle. Pas d'éponge abrasive.</li>
+  <li>Résistance : brosse douce. Boîtier : chiffon humide, jamais sous l'eau.</li>
+  <li>Fumée blanche = graisse de la fois précédente ou aliments gras : nettoie après chaque cuisson.</li></ul></div>
+  <div class="box"><b>🌡️ Températures à cœur (thermomètre)</b><ul style="padding-left:18px;margin:6px 0 0">
+  <li>Volaille : <b>74 °C</b></li><li>Viande hachée : <b>70 °C</b></li><li>Porc : <b>63 °C</b> + 3 min de repos</li>
+  <li>Bœuf, agneau : saignant 52 °C, à point 57 °C, bien cuit 63 °C</li><li>Poisson : 55 °C nacré, 63 °C bien cuit</li></ul></div>
+  <p style="font-size:12.5px;color:var(--muted)">Caractéristiques : fiche Electro Dépôt et notice Valberg VAL-AF11.5LFLEX (07/2025). Recettes et temps indicatifs : vérifie toujours la cuisson.</p>`;
+}
+/* minuteur */
+let tLeft=600,tSet=600,tEnd=0,tInt=null;
+const fmt=s=>{s=Math.max(0,Math.round(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")};
+function tDraw(){const left=tEnd?(tEnd-Date.now())/1000:tLeft;$("#tclock").textContent=fmt(left);$("#tgo").textContent=tEnd?"Pause":"Démarrer";
+  const p=$("#pill");if(tEnd){p.style.display="block";p.textContent="⏱️ "+fmt(left)}else p.style.display=tLeft<tSet&&tLeft>0?"block":"none",p.textContent="⏸ "+fmt(tLeft);}
+let actx=null;
+function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();let t=actx.currentTime;for(let i=0;i<6;i++){const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.3,t+i*.4);g.gain.exponentialRampToValueAtTime(.001,t+i*.4+.3);o.start(t+i*.4);o.stop(t+i*.4+.3)}}catch(e){} if(navigator.vibrate)navigator.vibrate([400,200,400,200,400]);}
+function tTick(){const left=(tEnd-Date.now())/1000;if(left<=0){clearInterval(tInt);tInt=null;tEnd=0;tLeft=0;tDraw();$("#tclock").textContent="Terminé !";$("#pill").style.display="none";beep();openTimer();return}tDraw()}
+function tStart(){if(tEnd){tLeft=(tEnd-Date.now())/1000;tEnd=0;clearInterval(tInt);tInt=null;tDraw();return}
+  if(tLeft<=0)tLeft=tSet;try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}
+  tEnd=Date.now()+tLeft*1000;tInt=setInterval(tTick,250);tDraw();}
+function tSetMin(m){if(tEnd){clearInterval(tInt);tInt=null;tEnd=0}tSet=tLeft=m*60;tDraw()}
+function openTimer(){$("#timer").classList.add("open");tDraw()}
+$("#tpresets").innerHTML=[3,5,8,10,12,15,20,25].map(m=>`<button data-min="${m}">${m} min</button>`).join("");
+$("#tpresets").onclick=e=>{const b=e.target.closest("[data-min]");if(b)tSetMin(+b.dataset.min)};
+$("#tplus").onclick=()=>{if(tEnd)tEnd+=60000;else{tLeft+=60;tSet=Math.max(tSet,tLeft)}tDraw()};
+$("#tminus").onclick=()=>{if(tEnd)tEnd=Math.max(Date.now()+1000,tEnd-60000);else tLeft=Math.max(60,tLeft-60);tDraw()};
+$("#treset").onclick=()=>{clearInterval(tInt);tInt=null;tEnd=0;tLeft=tSet;tDraw();$("#pill").style.display="none"};
+$("#tgo").onclick=tStart;$("#tclose").onclick=()=>$("#timer").classList.remove("open");
+$("#timer").onclick=e=>{if(e.target.id==="timer")$("#timer").classList.remove("open")};
+$("#pill").onclick=openTimer;
+/* événements */
+document.addEventListener("click",e=>{
+  const fb=e.target.closest("[data-fav]");
+  if(fb){e.stopPropagation();const id=fb.dataset.fav;favs=favs.includes(id)?favs.filter(x=>x!==id):[...favs,id];saveFavs();if(cur)drawDetail();render();return}
+  const c=e.target.closest("[data-cat]");if(c){st.cat=c.dataset.cat;st.sub="";st.q="";$("#q").value="";$("#qx").style.display="none";render();c.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});window.scrollTo(0,0);return}
+  const s=e.target.closest("[data-sub]");if(s){st.sub=s.dataset.sub;render();return}
+  const t=e.target.closest("[data-t]");if(t){st.maxt=+t.dataset.t;render();return}
+  const o=e.target.closest("[data-open]");if(o){openDetail(o.dataset.open);return}
+  if(e.target.closest("#dback")){history.length>1&&location.hash?history.back():closeDetail();return}
+  if(e.target.closest("#sm")){if(srv>1){srv--;drawDetail()}return}
+  if(e.target.closest("#sp")){if(srv<16){srv++;drawDetail()}return}
+  if(e.target.closest("#dtimer")){tSetMin(cur.time);openTimer();return}
+  const n=e.target.closest("nav button");
+  if(n){const tab=n.dataset.tab;if(tab==="minuteur"){openTimer();return}
+    document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b===n));st.tab=tab;
+    $("#hdr .search").style.display=tab==="conseils"?"none":"flex";render();window.scrollTo(0,0)}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"){const o=e.target.closest&&e.target.closest("[data-open]");if(o)openDetail(o.dataset.open)}});
+$("#q").addEventListener("input",e=>{st.q=e.target.value.trim();$("#qx").style.display=st.q?"block":"none";render()});
+$("#qx").onclick=()=>{$("#q").value="";st.q="";$("#qx").style.display="none";render();$("#q").focus()};
+window.addEventListener("popstate",()=>{const m=location.hash.match(/^#r\/(.+)$/);if(m)openDetail(m[1],false);else closeDetail()});
+render();
+const m0=location.hash.match(/^#r\/(.+)$/);if(m0)openDetail(m0[1],false);
+if("serviceWorker" in navigator&&location.protocol!=="file:")navigator.serviceWorker.register("sw.js").catch(()=>{});
+})();
+</script>
+</body>
+</html>
