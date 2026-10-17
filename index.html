@@ -158,6 +158,32 @@ select.ppl{flex:0 0 auto;max-width:84px;padding:6px 2px;border-radius:10px;borde
 .ci .cq{flex:0 0 auto;font-size:14px;text-align:right;max-width:45%}
 .ci.ok .cn,.ci.ok .cq{text-decoration:line-through;opacity:.5}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#2b211b;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:99;pointer-events:none}
+/* v4 : Mon frigo */
+.fhead{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.fhead small{font-size:13px;color:var(--muted);font-weight:500}
+.tgbox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:4px 12px;margin:8px 0;box-shadow:var(--shadow)}
+.tg{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;font-size:14.5px;cursor:pointer}
+.tg+.tg{border-top:1px dashed var(--line)}.tg small{display:block;color:var(--muted);font-size:12px}
+.sw{appearance:none;-webkit-appearance:none;width:48px;height:29px;border-radius:999px;background:var(--line);position:relative;flex:0 0 auto;margin:0;transition:.2s;cursor:pointer}
+.sw:before{content:"";position:absolute;top:3px;left:3px;width:23px;height:23px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.2s}
+.sw:checked{background:var(--ok)}.sw:checked:before{transform:translateX(19px)}
+.fam{margin:4px 0 6px}.fam h3{font-size:15.5px;margin:14px 0 8px;display:flex;align-items:center;gap:6px}.fam h3 small{margin-left:auto;color:var(--muted);font-weight:500;font-size:12px}
+.igw{display:flex;flex-wrap:wrap;gap:8px}
+.ig{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:14.5px;min-height:42px;text-align:left;line-height:1.2}
+.ig .n{font-size:11.5px;color:var(--muted);font-weight:500}
+.ig.on{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:600}.ig.on .n{color:#fff;opacity:.85}
+.ig.free{border-style:dashed;opacity:.6}
+.selw{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.sel{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;background:var(--soft);font-size:13.5px}
+.fgo{position:sticky;bottom:calc(70px + env(safe-area-inset-bottom));z-index:4;box-shadow:0 4px 16px rgba(80,45,20,.25)}
+.fgo[disabled]{background:var(--line);color:var(--muted);box-shadow:none;position:static}
+.fcard{align-items:flex-start}.fcard .bar{height:6px;border-radius:99px;background:var(--line);margin-top:7px;overflow:hidden}
+.fcard .bar i{display:block;height:100%;background:var(--ok);border-radius:99px}.fcard.near .bar i{background:var(--accent2)}
+.fm{font-size:13px;margin-top:5px;color:var(--muted)}.fm b{color:var(--warn);font-weight:650}.fm.ok{color:var(--ok);font-weight:600}
+.pct{flex:0 0 auto;font-size:14px;font-weight:700;color:var(--ok);padding-top:2px}.near .pct{color:var(--accent)}
+.fadd{display:inline-block;margin-top:7px;padding:7px 11px;border-radius:10px;background:var(--soft);font-size:13px;font-weight:650;color:var(--ink)}
+.fadd.done{background:transparent;border:1px solid var(--line);color:var(--ok)}
+.xdel{width:30px;height:30px;font-size:13px}
+.fz td small{color:var(--muted)}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
@@ -197,6 +223,7 @@ select.ppl{flex:0 0 auto;max-width:84px;padding:6px 2px;border-radius:10px;borde
 
 <nav>
   <button data-tab="recettes" class="on"><i>🍽️</i>Recettes</button>
+  <button data-tab="frigo"><i>🧺</i>Mon frigo</button>
   <button data-tab="semaine"><i>📅</i>Semaine</button>
   <button data-tab="favoris"><i>♥</i>Favoris</button>
   <button data-tab="minuteur"><i>⏱️</i>Minuteur</button>
@@ -204,6 +231,7 @@ select.ppl{flex:0 0 auto;max-width:84px;padding:6px 2px;border-radius:10px;borde
 </nav>
 
 <script src="recipes.js"></script>
+<script src="frigo.js"></script>
 <script>
 (function(){
 const $=s=>document.querySelector(s);
@@ -219,7 +247,7 @@ const PNAME={volaille:"Volaille",viande:"Viande",poisson:"Poisson",vege:"Végét
 const SUBS=[["","Tous les plats"],["viande","Viande"],["volaille","Volaille"],["poisson","Poisson"],["vegetarien","Végétarien"]];
 const TIMES=[[0,"Toutes durées"],[15,"< 15 min"],[30,"< 30 min"]];
 const CATNAME=Object.fromEntries(CATS);const SUBNAME=Object.fromEntries(SUBS);
-const st={tab:"recettes",cat:"all",sub:"",maxt:0,q:"",p30:false,k400:false,sort:"",spe:"monde",origin:"",wv:"menu"};
+const st={tab:"recettes",cat:"all",sub:"",maxt:0,q:"",p30:false,k400:false,sort:"",spe:"monde",origin:"",wv:"menu",fv:"ing",fp:"frigo",fq:"",fcat:"all"};
 let favs=[];try{favs=JSON.parse(localStorage.getItem("af-favs")||"[]")}catch(e){}
 const saveFavs=()=>{try{localStorage.setItem("af-favs",JSON.stringify(favs))}catch(e){}};
 const norm=s=>(s||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/œ/g,"oe").replace(/æ/g,"ae");
@@ -283,6 +311,7 @@ function render(){
   const m=$("#main");
   if(st.tab==="conseils"){m.innerHTML=conseils();return}
   if(st.tab==="semaine"){m.innerHTML=weekView();return}
+  if(st.tab==="frigo"){m.innerHTML=frigoView();return}
   const list=filtered();
   let h="";
   if(st.tab==="recettes"&&!st.q){
@@ -521,6 +550,7 @@ function buildCourses(){
     r.sh.forEach(([key,name,a,q,u])=>{const k=a+"|"+key;const e=map[k]||(map[k]={k,name,a,q:{},free:false,rec:new Set()});
       e.rec.add(r.t);if(q==null||!u){e.free=true;return}e.q[u]=(e.q[u]||0)+q*f;});
   });
+  Object.keys(extra).forEach(id=>{const it=FI[id];if(!it)return;const k="x|"+id;if(!map[k])map[k]={k,name:shortIng(it.l),a:it.a,q:{},free:true,rec:new Set(["ajouté depuis Mon frigo"]),x:id}});
   return {meals,items:Object.values(map)};
 }
 const trim=n=>String(+n.toFixed(2)).replace(".",",");
@@ -542,14 +572,14 @@ function coursesData(){
 }
 function coursesView(){
   const {meals,groups,n}=coursesData();
-  if(!meals)return `<div class="empty">Ta semaine est vide.<br>Ajoute des repas dans « Menu » (ou choisis une suggestion) : la liste de courses se remplit toute seule.</div>`;
+  if(!meals&&!n)return `<div class="empty">Ta semaine est vide.<br>Ajoute des repas dans « Menu » (ou choisis une suggestion) : la liste de courses se remplit toute seule.</div>`;
   const done=groups.reduce((s,g)=>s+g.items.filter(x=>checked[x.k]).length,0);
-  let h=`<p style="font-size:13px;color:var(--muted);margin:6px 0">${meals} repas planifiés · ${n} produits · ${done} coché${done>1?"s":""}. Quantités calculées pour le nombre de personnes de chaque repas, ingrédients identiques regroupés. Arrondis vers le haut pour les pièces.</p>`;
+  let h=`<p style="font-size:13px;color:var(--muted);margin:6px 0">${meals} repas planifiés · ${n} produit${n>1?"s":""} · ${done} coché${done>1?"s":""}. Quantités calculées pour le nombre de personnes de chaque repas, ingrédients identiques regroupés. Arrondis vers le haut pour les pièces.</p>`;
   h+=`<div class="btnrow"><button class="btn pri" id="cshare">📤 Copier / Partager</button><button class="btn" id="wclear">🗑️ Vider la semaine</button></div>`;
   if(done)h+=`<button class="btn" id="cuncheck" style="display:block;width:100%;margin-bottom:8px">↺ Tout décocher</button>`;
   groups.forEach(g=>{
     h+=`<div class="aisle${g.a===8?" placard":""}"><h3>${AICON[g.a]} ${g.n}${g.a===8?"":` <small>${g.items.length}</small>`}</h3>${g.a===8?`<p class="pn">Produits de base : vérifie qu'il t'en reste avant de partir.</p>`:""}`;
-    g.items.forEach(x=>{h+=`<label class="ci${checked[x.k]?" ok":""}"><input type="checkbox" data-ck="${esc(x.k)}"${checked[x.k]?" checked":""}><span class="cn">${esc(x.name)}<small>${esc([...x.rec].join(" · "))}</small></span><b class="cq">${x.txt||(g.a===8?"":"au goût")}</b></label>`});
+    g.items.forEach(x=>{h+=`<label class="ci${checked[x.k]?" ok":""}"><input type="checkbox" data-ck="${esc(x.k)}"${checked[x.k]?" checked":""}><span class="cn">${esc(x.name)}<small>${esc([...x.rec].join(" · "))}</small></span>${x.x?`<button class="ib xdel" data-xdel="${esc(x.x)}" aria-label="Retirer de la liste">✕</button>`:`<b class="cq">${x.txt||(g.a===8?"":"au goût")}</b>`}</label>`});
     h+=`</div>`;
   });
   h+=`<p style="font-size:12px;color:var(--muted)">Les quantités viennent des recettes (portions de base) multipliées par le nombre de personnes. Pense aux accompagnements que tu ajoutes toi-même.</p>`;
@@ -570,7 +600,114 @@ async function shareCourses(){
   let ok=false;try{ok=document.execCommand("copy")}catch(e){}ta.remove();toast(ok?"✅ Liste copiée dans le presse-papiers":"Copie impossible sur ce navigateur");
 }
 window.__af={buildCourses,coursesData,coursesText,W:()=>W};
-function clearWeek(){if(week.some(Boolean)&&confirm("Vider toute la semaine ? Les repas et les cases cochées de la liste de courses seront effacés.")){week=Array(21).fill(null);W.ov={};saveWeek();checked={};saveChecked();render()}}
+/* ===== Mon frigo (v4 : recettes inverses) ===== */
+const shortIng=l=>l.replace(/\s*\(.*\)\s*/,"");
+const FI=Object.fromEntries(FRIGO_ING.map(x=>[x[0],{id:x[0],l:x[1],e:x[2],f:x[3],a:x[4],s:" "+norm(x[1]+" "+x[5]).replace(/[^a-z0-9]+/g," "),sat:x[6]||[],fz:x[7]}]));
+const FFAMS=FRIGO_FAMS.map(f=>({id:f[0],p:f[1],t:f[2],ings:FRIGO_ING.filter(x=>x[3]===f[0]).map(x=>x[0])}));
+const SPICES=new Set(FRIGO_ING.filter(x=>x[3]===FRIGO_SPICE_FAM).map(x=>x[0]));
+const BASES=new Set(FRIGO_BASE);
+let FR={sel:[],base:true,spice:true};
+try{const j=JSON.parse(localStorage.getItem("af-frigo")||"null");if(j&&Array.isArray(j.sel))FR={sel:j.sel.filter(id=>FI[id]),base:j.base!==false,spice:j.spice!==false}}catch(e){}
+const saveFR=()=>{try{localStorage.setItem("af-frigo",JSON.stringify(FR))}catch(e){}};
+let extra={};try{extra=JSON.parse(localStorage.getItem("af-extra")||"{}")||{}}catch(e){}
+const saveExtra=()=>{try{localStorage.setItem("af-extra",JSON.stringify(extra))}catch(e){}};
+/* besoins de chaque recette, à partir de ses ingrédients (champ sh) */
+RECIPES.forEach(r=>{
+  const opt=new Set(FRIGO_OPT[r.id]||[]),fix=FRIGO_FIX[r.id]||{},seen=new Set();r.req=[];
+  r.sh.forEach(s=>{const k=fix[s[0]]||s[0],spec=FRIGO_MAP[k];if(!spec)return;
+    spec.split("+").forEach(g=>{const alts=g.split("|"),key=alts.join("|");if(seen.has(key))return;seen.add(key);r.req.push({alts,opt:opt.has(s[0])})})});
+});
+const FPOOL=RECIPES.filter(r=>r.req.length);
+const ICOUNT={};FPOOL.forEach(r=>{const u=new Set();r.req.forEach(g=>g.alts.forEach(id=>u.add(id)));u.forEach(id=>ICOUNT[id]=(ICOUNT[id]||0)+1)});
+FRIGO_ING.forEach(x=>(x[6]||[]).forEach(t=>{ICOUNT[x[0]]=Math.max(ICOUNT[x[0]]||0,0)}));
+const isFree=id=>(FR.base&&BASES.has(id))||(FR.spice&&SPICES.has(id));
+function frAvail(){const a=new Set(FR.sel);FR.sel.forEach(id=>FI[id].sat.forEach(t=>a.add(t)));return a}
+function frMatch(r,a){
+  let need=0,have=0;const miss=[];
+  r.req.forEach(g=>{if(g.opt||g.alts.some(isFree))return;need++;if(g.alts.some(id=>a.has(id)))have++;else miss.push(g)});
+  return {r,need,have,miss,pct:need?Math.round(have/need*100):100};
+}
+function frResults(){
+  const a=frAvail(),ok=[],near=[];
+  if(!FR.sel.length)return {ok,near,all:[]};
+  FPOOL.forEach(r=>{const m=frMatch(r,a);if(!m.have)return;if(!m.miss.length)ok.push(m);else if(m.miss.length<=2)near.push(m)});
+  const srt=(x,y)=>y.pct-x.pct||x.miss.length-y.miss.length||y.have-x.have||x.r.t.localeCompare(y.r.t,"fr");
+  ok.sort(srt);near.sort(srt);return {ok,near,all:ok.concat(near)};
+}
+const FCATS=["all","viandes","volaille","poissons","regime","proteines","entrees","plats","accomp","desserts","aperos","petitdej","specialites"];
+const grpLabel=g=>g.alts.map(id=>shortIng(FI[id].l)).join(" ou ");
+function fcard(m){
+  const r=m.r,inList=m.miss.every(g=>extra[g.alts[0]]);
+  return `<div class="card fcard${m.miss.length?" near":""}" role="button" tabindex="0" data-open="${r.id}"><div class="emo">${r.e}</div><div style="min-width:0;flex:1"><div class="t">${esc(r.t)}</div><div class="meta"><span>🕒 ${total(r)} min</span>${r.n?`<span>🔥 ${r.n[0]} kcal</span><span>💪 ${r.n[1]} g prot.</span>`:""}</div><div class="bar"><i style="width:${m.pct}%"></i></div>${m.miss.length?`<div class="fm">Il te manque : ${m.miss.map(g=>`<b>${esc(grpLabel(g))}</b>`).join(", ")}</div><button class="fadd${inList?" done":""}" data-fadd="${r.id}">${inList?"✓ Dans ta liste de courses":"🛒 Ajouter à la liste de courses"}</button>`:`<div class="fm ok">✅ Tu as tout ce qu'il faut</div>`}</div><b class="pct">${m.pct} %</b></div>`;
+}
+function frChip(id){
+  const it=FI[id],on=FR.sel.includes(id),free=!on&&isFree(id),c=ICOUNT[id]||0;
+  const info=it.fz!=null?`${FROZEN[it.fz][2]} °C`:(c?c:"");
+  return `<button class="ig${on?" on":""}${free?" free":""}" data-ing="${id}" aria-pressed="${on}">${it.e} ${esc(it.l)}${info!==""?` <span class="n">${info}</span>`:""}</button>`;
+}
+function frGrid(){
+  const words=norm(st.fq||"").replace(/[^a-z0-9]+/g," ").split(/\s+/).filter(Boolean);
+  let h="";
+  FFAMS.forEach(f=>{
+    if(!words.length&&f.p!==st.fp)return;
+    const ids=f.ings.filter(id=>words.every(w=>FI[id].s.includes(" "+w)));if(!ids.length)return;
+    const note=f.id==="base"&&FR.base?"toujours dispo (interrupteur)":f.id===FRIGO_SPICE_FAM&&FR.spice?"considérées comme dispo":"";
+    h+=`<div class="fam"><h3>${f.t}${words.length?` <small>${FRIGO_PLACES.find(p=>p[0]===f.p)[1]}</small>`:note?` <small>${note}</small>`:""}</h3><div class="igw">${ids.map(frChip).join("")}</div></div>`;
+  });
+  return h||`<div class="empty">Aucun ingrédient pour « ${esc(st.fq)} ».<br>Essaie un autre mot (ex. : poulet, crème, frites).</div>`;
+}
+function frPlaceCount(p){return FR.sel.filter(id=>FFAMS.find(f=>f.id===FI[id].f).p===p).length}
+function frGoText(n){return n?`🍽️ Voir les ${n} recette${n>1?"s":""} possible${n>1?"s":""}`:(FR.sel.length?"Aucune recette avec ces ingrédients pour l'instant":"Sélectionne ce que tu as")}
+function frSelBar(){
+  if(!FR.sel.length)return "";
+  return `<div class="selw">${FR.sel.map(id=>`<button class="sel" data-ing="${id}" aria-label="Retirer ${esc(shortIng(FI[id].l))}">${FI[id].e} ${esc(shortIng(FI[id].l))} ✕</button>`).join("")}</div><button class="btn" id="fclear" style="display:block;width:100%;margin:6px 0">🗑️ Tout effacer</button>`;
+}
+function frigoView(){
+  const R=frResults(),nRes=R.all.length;
+  let h=`<div class="fhead"><h2 style="margin-bottom:6px">🧺 Mon frigo</h2><small>recettes inverses</small></div>`;
+  h+=`<div class="seg"><button class="${st.fv!=="res"?"on":""}" data-fv="ing">🧺 Ce que j'ai <span id="fnsel">${FR.sel.length?"("+FR.sel.length+")":""}</span></button><button class="${st.fv==="res"?"on":""}" data-fv="res">🍽️ Recettes <span id="fnres">${nRes?"("+nRes+")":""}</span></button></div>`;
+  if(st.fv!=="res"){
+    h+=`<p style="font-size:13px;color:var(--muted);margin:8px 0 4px">Touche ce que tu as dans ton frigo, ton congélateur et tes placards : l'appli te propose les recettes faisables, puis celles où il ne manque qu'1 ou 2 ingrédients. Le chiffre indique dans combien de recettes l'ingrédient sert.</p>`;
+    h+=`<div class="tgbox"><label class="tg"><span>🧂 Sel, poivre, huile et eau toujours dispo<small>Comptés comme présents dans tes placards</small></span><input type="checkbox" class="sw" data-frt="base"${FR.base?" checked":""}></label><label class="tg"><span>🌶️ Épices et herbes sèches aussi<small>Paprika, cumin, thym, herbes de Provence…</small></span><input type="checkbox" class="sw" data-frt="spice"${FR.spice?" checked":""}></label></div>`;
+    h+=`<div class="search" style="margin:10px 0 4px"><span aria-hidden="true">🔎</span><input id="fq" type="search" placeholder="Chercher un ingrédient : poulet, crème…" autocomplete="off" aria-label="Chercher un ingrédient" value="${esc(st.fq||"")}"><button class="x" id="fqx" aria-label="Effacer" style="display:${st.fq?"block":"none"}">✕</button></div>`;
+    h+=`<div class="seg" id="fplaces">${FRIGO_PLACES.map(([k,v])=>{const c=frPlaceCount(k);return `<button class="${st.fp===k?"on":""}" data-fp="${k}" style="font-size:13.5px;padding:8px 2px">${v}<span data-fpn="${k}">${c?" ("+c+")":""}</span></button>`}).join("")}</div>`;
+    h+=`<div id="fgrid">${frGrid()}</div>`;
+    h+=`<div id="fselbar">${frSelBar()}</div>`;
+    h+=`<button class="big fgo" id="fgo"${nRes?"":" disabled"}>${frGoText(nRes)}</button>`;
+    return h;
+  }
+  if(!FR.sel.length)return h+`<div class="empty">Tu n'as encore rien sélectionné.<br><button class="big" data-fv="ing" style="margin-top:14px">🧺 Choisir mes ingrédients</button></div>`;
+  h+=`<div id="fselbar">${frSelBar()}</div>`;
+  const cnt=c=>R.all.filter(m=>inCat(m.r,c)).length;
+  h+=`<div class="chips" style="padding-top:4px">${FCATS.filter(c=>c==="all"||cnt(c)).map(c=>`<button class="chip small ${st.fcat===c?"on":""}" data-fcat="${c}">${CATNAME[c]}${c!=="all"?`<span class="n">${cnt(c)}</span>`:""}</button>`).join("")}</div>`;
+  const ok=R.ok.filter(m=>inCat(m.r,st.fcat)),near=R.near.filter(m=>inCat(m.r,st.fcat));
+  const fz=FR.sel.map(id=>FI[id]).filter(it=>it.fz!=null);
+  if(fz.length)h+=`<h3>❄️ Prêt à cuire depuis ton congélateur</h3><table class="fz"><tr><th>Produit</th><th>°C</th><th>Min</th><th>Secouer</th></tr>${fz.map(it=>{const f=FROZEN[it.fz];return `<tr><td>${f[0]} ${esc(f[1])}${f[5]?`<br><small>${esc(f[5])}</small>`:""}</td><td class="n">${f[2]}</td><td class="n">${f[3]}</td><td>${f[4]}</td></tr>`}).join("")}</table><p style="font-size:12px;color:var(--muted);margin:6px 0">Repères du tableau Surgelés de l'appli. Une seule couche, secoue à mi-cuisson.</p>`;
+  h+=`<h3>✅ Tu peux cuisiner <small style="color:var(--muted);font-weight:500">(${ok.length})</small></h3>`;
+  h+=ok.length?`<div class="list">${ok.map(fcard).join("")}</div>`:`<div class="note">Aucune recette complète avec ta sélection${st.fcat!=="all"?" dans cette catégorie":""}. Regarde juste en dessous : il manque peu de chose.</div>`;
+  h+=`<h3>🛒 Il te manque 1 ou 2 ingrédients <small style="color:var(--muted);font-weight:500">(${near.length})</small></h3>`;
+  h+=near.length?`<div class="list">${near.map(fcard).join("")}</div>`:`<div class="note">Rien à proposer ici. Ajoute quelques ingrédients dans « Ce que j'ai ».</div>`;
+  h+=`<p style="font-size:12px;color:var(--muted);margin-top:14px">Tri par pourcentage d'ingrédients que tu as déjà${FR.base||FR.spice?" (hors basiques considérés comme dispo)":""}. Les ingrédients facultatifs ou « pour servir » ne sont pas comptés. Valeurs nutritionnelles estimées par portion, reprises des fiches recettes.</p>`;
+  return h;
+}
+function frUpdate(){
+  const n=frResults().all.length,g=$("#fgo");
+  if($("#fgrid"))$("#fgrid").innerHTML=frGrid();
+  if($("#fselbar"))$("#fselbar").innerHTML=frSelBar();
+  if(g){g.textContent=frGoText(n);g.disabled=!n}
+  if($("#fnsel"))$("#fnsel").textContent=FR.sel.length?"("+FR.sel.length+")":"";
+  if($("#fnres"))$("#fnres").textContent=n?"("+n+")":"";
+  FRIGO_PLACES.forEach(([k])=>{const el=document.querySelector(`[data-fpn="${k}"]`);if(el){const c=frPlaceCount(k);el.textContent=c?" ("+c+")":""}});
+}
+function frToggle(id){FR.sel=FR.sel.includes(id)?FR.sel.filter(x=>x!==id):[...FR.sel,id];saveFR();if(st.fv==="res")render();else frUpdate()}
+function frAddMissing(rid){
+  const m=frMatch(byId[rid],frAvail());if(!m.miss.length)return;
+  const ids=m.miss.map(g=>g.alts[0]);const all=ids.every(id=>extra[id]);
+  if(all){toast("Déjà dans ta liste de courses (Semaine › Courses)");return}
+  ids.forEach(id=>extra[id]=1);saveExtra();render();toast(`🛒 ${ids.map(id=>shortIng(FI[id].l)).join(", ")} : ajouté à ta liste (Semaine › Courses)`);
+}
+window.__af.frigo={FR:()=>FR,frResults,frMatch,frAvail,FI,extra:()=>extra,ICOUNT};
+function clearWeek(){if((week.some(Boolean)||Object.keys(extra).length)&&confirm("Vider toute la semaine ? Les repas, les ajouts « Mon frigo » et les cases cochées de la liste de courses seront effacés.")){week=Array(21).fill(null);W.ov={};saveWeek();checked={};saveChecked();extra={};saveExtra();render()}}
 function fillWeek(ids){if(week.some(Boolean)&&!confirm("Remplacer le menu actuel de ta semaine ?"))return;week=ids.slice();W.ov={};saveWeek();render();window.scrollTo(0,0)}
 function shuffleSlot(i){
   const cur=byId[week[i]];if(!cur)return;
@@ -641,7 +778,16 @@ document.addEventListener("click",e=>{
   const gp=e.target.closest("[data-gppl]");if(gp){W.ppl=Math.min(12,Math.max(1,W.ppl+ +gp.dataset.gppl));saveWeek();render();return}
   if(e.target.closest("#cshare")){shareCourses();return}
   if(e.target.closest("#cuncheck")){checked={};saveChecked();render();return}
-  if(e.target.closest("select.ppl")||e.target.closest("label.ci"))return;
+  const xd=e.target.closest("[data-xdel]");if(xd){e.preventDefault();delete extra[xd.dataset.xdel];delete checked["x|"+xd.dataset.xdel];saveExtra();saveChecked();render();return}
+  const fa=e.target.closest("[data-fadd]");if(fa){e.stopPropagation();frAddMissing(fa.dataset.fadd);return}
+  const fi=e.target.closest("[data-ing]");if(fi){frToggle(fi.dataset.ing);return}
+  const fvb=e.target.closest("[data-fv]");if(fvb){st.fv=fvb.dataset.fv;render();window.scrollTo(0,0);return}
+  const fpb=e.target.closest("[data-fp]");if(fpb){st.fp=fpb.dataset.fp;st.fq="";render();return}
+  const fcb=e.target.closest("[data-fcat]");if(fcb){st.fcat=fcb.dataset.fcat;render();return}
+  if(e.target.closest("#fgo")){st.fv="res";render();window.scrollTo(0,0);return}
+  if(e.target.closest("#fqx")){st.fq="";const i=$("#fq");i.value="";$("#fqx").style.display="none";frUpdate();i.focus();return}
+  if(e.target.closest("#fclear")){if(confirm("Tout effacer ? Tes ingrédients sélectionnés seront retirés.")){FR.sel=[];saveFR();st.fv="ing";render()}return}
+  if(e.target.closest("select.ppl")||e.target.closest("label.ci")||e.target.closest("label.tg"))return;
   const pr=e.target.closest("[data-pickr]");if(pr){week[pickSlot]=pr.dataset.pickr;saveWeek();$("#pick").classList.remove("open");render();return}
   if(e.target.closest("#pickclose")||e.target.id==="pick"){$("#pick").classList.remove("open");return}
   if(e.target.closest("#dweek")){openSlotPick(cur);return}
@@ -654,13 +800,15 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#dtimer")){tSetMin(cur.time);openTimer();return}
   const n=e.target.closest("nav button");
   if(n){const tab=n.dataset.tab;if(tab==="minuteur"){openTimer();return}
-    document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b===n));st.tab=tab;
-    $("#hdr .search").style.display=tab==="conseils"||tab==="semaine"?"none":"flex";render();window.scrollTo(0,0)}
+    document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b===n));if(tab==="frigo"&&st.tab!=="frigo")st.fv=FR.sel.length?"res":"ing";st.tab=tab;
+    $("#hdr .search").style.display=tab==="conseils"||tab==="semaine"||tab==="frigo"?"none":"flex";render();window.scrollTo(0,0)}
 });
 document.addEventListener("keydown",e=>{if(e.key==="Enter"){const o=e.target.closest&&e.target.closest("[data-open]");if(o)openDetail(o.dataset.open)}});
 $("#pq").addEventListener("input",drawPick);
+document.addEventListener("input",e=>{if(e.target.id==="fq"){st.fq=e.target.value.trim();$("#fqx").style.display=st.fq?"block":"none";$("#fgrid").innerHTML=frGrid()}});
 document.addEventListener("change",e=>{
   const sl=e.target.closest("[data-wppl]");if(sl){const v=+sl.value;if(v)W.ov[sl.dataset.wppl]=v;else delete W.ov[sl.dataset.wppl];saveWeek();render();return}
+  const ft=e.target.closest("[data-frt]");if(ft){FR[ft.dataset.frt]=ft.checked;saveFR();frUpdate();return}
   const ck=e.target.closest("[data-ck]");if(ck){if(ck.checked)checked[ck.dataset.ck]=1;else delete checked[ck.dataset.ck];saveChecked();ck.closest("label").classList.toggle("ok",ck.checked);return}
 });
 $("#q").addEventListener("input",e=>{st.q=e.target.value.trim();$("#qx").style.display=st.q?"block":"none";render()});
